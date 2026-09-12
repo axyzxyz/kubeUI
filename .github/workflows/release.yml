@@ -79,6 +79,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           path: out
+          pattern: kubeui-*
           merge-multiple: true
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -88,6 +89,9 @@ jobs:
 
   docker:
     runs-on: ubuntu-latest
+    env:
+      # 不上传 buildx 构建记录 artifact(污染 release 下载,曾致 download-artifact 失败)
+      DOCKER_BUILD_RECORD_UPLOAD: false
     steps:
       - uses: actions/checkout@v4
       - uses: docker/setup-buildx-action@v3
