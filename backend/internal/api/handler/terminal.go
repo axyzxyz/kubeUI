@@ -3,15 +3,22 @@ package handler
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
+	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+	//nolint:staticcheck // 该"deprecated"包是 client-go Upgrader 类型兼容的官方适配层
+	httpstreamspdy "k8s.io/apimachinery/pkg/util/httpstream/spdy"
 	k8sscheme "k8s.io/client-go/kubernetes/scheme"
+	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/remotecommand"
+	"k8s.io/client-go/transport"
 
 	"github.com/axyzxyz/kubeui/backend/internal/api/middleware"
 	"github.com/axyzxyz/kubeui/backend/internal/pkg/errcode"
@@ -108,8 +115,43 @@ func newExecExecutor(d Deps, cluster, namespace, name, container, shell string) 
 	req := rt.ClientSet.CoreV1().RESTClient().
 		Post().Resource("pods").Namespace(namespace).Name(name).SubResource("exec").
 		VersionedParams(execOptions, runtime.NewParameterCodec(k8sscheme.Scheme))
-		// SPDY exec:唯一官方 exec 通道;经 rest.Config.Dial 走 Agent 隧道(若注入)。
-	return remotecommand.NewSPDYExecutor(rt.RestConfig, "POST", req.URL())
+	return newSPDYExecutor(rt.RestConfig, "POST", req.URL())
+}
+
+// newSPDYExecutor 构造 exec 的 SPDY 执行器。
+//
+// client-go 的 spdy.RoundTripperFor 不读 rest.Config.Dial(升级连接用自带
+// net.Dialer 直拨 APIServer 地址),Agent 隧道集群上 exec 会绕过隧道、在
+// server 本机拨 kubeconfig 里的地址。这里经 RoundTripperConfig.UpgradeTransport
+// 注入带隧道拨号与 kubeconfig CA 的传输,使 exec 升级连接与普通请求同路。
+func newSPDYExecutor(cfg *rest.Config, method string, url *url.URL) (remotecommand.Executor, error) {
+	transportCfg, err := cfg.TransportConfig()
+	if err != nil {
+		return nil, fmt.Errorf("build transport config: %w", err)
+	}
+	tlsCfg, err := transport.TLSConfigFor(transportCfg)
+	if err != nil {
+		return nil, fmt.Errorf("build exec tls config: %w", err)
+	}
+	upgradeTransport := &http.Transport{
+		TLSClientConfig: tlsCfg,
+		Proxy:           http.ProxyFromEnvironment,
+	}
+	if transportCfg.DialHolder != nil && transportCfg.DialHolder.Dial != nil {
+		upgradeTransport.DialContext = transportCfg.DialHolder.Dial
+	}
+	upgradeRT, err := httpstreamspdy.NewRoundTripperWithConfig(httpstreamspdy.RoundTripperConfig{
+		UpgradeTransport: upgradeTransport,
+		PingPeriod:       5 * time.Second,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("build exec upgrade roundtripper: %w", err)
+	}
+	wrapper, err := rest.HTTPWrappersForConfig(cfg, upgradeRT)
+	if err != nil {
+		return nil, fmt.Errorf("wrap exec transport: %w", err)
+	}
+	return remotecommand.NewSPDYExecutorForTransports(wrapper, upgradeRT, method, url)
 }
 
 // newStdinPipe 创建 exec stdin 桥:返回读端(exec 侧)、写函数(WS 读泵侧)
