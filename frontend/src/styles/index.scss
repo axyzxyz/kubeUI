@@ -1,0 +1,65 @@
+@use './tokens.scss';
+@use 'element-plus/theme-chalk/src/dark/css-vars.scss' as dark;
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--bg-page);
+  color: var(--text-1);
+  font-family:
+    'Inter', 'PingFang SC', 'HarmonyOS Sans SC', 'Microsoft YaHei', system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+.mono {
+  font-family: var(--font-code);
+}
+
+.page {
+  padding: 20px 24px;
+}
+
+.page-title {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 28px;
+  margin: 0 0 16px;
+}
+
+.table-compact .el-table {
+  --el-table-row-height: 36px;
+  font-size: 13px;
+}
+
+// Element Plus token 与设计 token 对齐
+:root {
+  --el-color-primary: var(--brand-primary);
+  --el-border-color: var(--border-1);
+  --el-border-color-light: var(--border-1);
+  --el-fill-color-light: var(--bg-surface-2);
+  --el-text-color-primary: var(--text-1);
+  --el-text-color-regular: var(--text-2);
+  --el-bg-color: var(--bg-surface);
+  --el-bg-color-page: var(--bg-page);
+}
+
+.el-table {
+  --el-table-border-color: var(--border-1);
+  --el-table-header-bg-color: var(--bg-surface-2);
+  --el-table-header-text-color: var(--text-2);
+  --el-table-row-hover-bg-color: var(--brand-primary-bg);
+}

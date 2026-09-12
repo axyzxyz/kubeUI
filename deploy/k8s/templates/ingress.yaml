@@ -1,0 +1,45 @@
+{{- if .Values.server.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "v911.name" . }}-server
+  labels:
+    app.kubernetes.io/name: {{ include "v911.name" . }}
+    app.kubernetes.io/component: server
+  annotations:
+    # ── WebSocket 支持(/api/v1/watch、终端、日志流、Agent 反连)──
+    # upgrade 透传 + 长连接超时放宽(默认 60s 会掐断 WS 心跳长连接)
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      proxy_set_header Upgrade $http_upgrade;
+      proxy_set_header Connection "upgrade";
+    # /k8s/ 端点(K8s API 反向代理,exec SPDY 流)必须禁用请求体缓冲
+    nginx.ingress.kubernetes.io/server-snippet: |
+      location /k8s/ {
+        proxy_request_buffering off;
+        proxy_buffering off;
+      }
+    {{- with .Values.ingressAnnotations }}
+{{ toYaml . | indent 4 }}
+    {{- end }}
+spec:
+  ingressClassName: {{ .Values.server.ingress.className }}
+  {{- if .Values.server.ingress.tls.enabled }}
+  tls:
+    - hosts:
+        - {{ .Values.server.ingress.host | quote }}
+      secretName: {{ .Values.server.ingress.tls.secretName }}
+  {{- end }}
+  rules:
+    - host: {{ .Values.server.ingress.host | quote }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "v911.name" . }}-server
+                port:
+                  name: http
+{{- end }}

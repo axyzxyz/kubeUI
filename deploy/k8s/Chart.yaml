@@ -1,0 +1,10 @@
+apiVersion: v2
+name: v911
+description: v911 - 多集群 Kubernetes 管理 Dashboard(server + agent)
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+keywords:
+  - kubernetes
+  - dashboard
+  - multi-cluster

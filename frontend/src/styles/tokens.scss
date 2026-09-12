@@ -1,0 +1,62 @@
+// 色彩 token(03-ui-design.md §2.1),亮/暗双主题 CSS 变量
+// 暗色为默认主题(html.dark)
+
+:root {
+  --brand-primary: #326ce5;
+  --brand-primary-hover: #2a5ec7;
+  --brand-primary-active: #2450aa;
+  --brand-primary-bg: #eaf0fc;
+
+  --success: #16a34a;
+  --success-bg: #e8f7ee;
+  --warning: #d97706;
+  --warning-bg: #fef5e7;
+  --danger: #dc2626;
+  --danger-bg: #fdebeb;
+  --info: #0e7490;
+  --info-bg: #e6f6fa;
+  --neutral: #6b7280;
+  --neutral-bg: #f3f4f6;
+
+  --bg-page: #f5f7fa;
+  --bg-surface: #ffffff;
+  --bg-surface-2: #fafbfc;
+  --bg-elevated: #ffffff;
+  --bg-inset: #eef1f5;
+  --border-1: #e4e8ee;
+  --border-2: #d0d7e0;
+  --text-1: #1a2230;
+  --text-2: #5a6474;
+  --text-3: #8b94a5;
+
+  --font-code: 'JetBrains Mono', 'Cascadia Code', 'SFMono-Regular', Consolas, monospace;
+}
+
+html.dark {
+  --brand-primary: #5b8def;
+  --brand-primary-hover: #7aa5f5;
+  --brand-primary-active: #326ce5;
+  --brand-primary-bg: #1b2a4a;
+
+  --success: #4ade80;
+  --success-bg: #12291b;
+  --warning: #fbbf24;
+  --warning-bg: #332611;
+  --danger: #f87171;
+  --danger-bg: #331717;
+  --info: #38bdf8;
+  --info-bg: #0e2a36;
+  --neutral: #9ca3af;
+  --neutral-bg: #2a2e35;
+
+  --bg-page: #0f1218;
+  --bg-surface: #171c24;
+  --bg-surface-2: #1e242e;
+  --bg-elevated: #232a35;
+  --bg-inset: #12161d;
+  --border-1: #2a3140;
+  --border-2: #3a4356;
+  --text-1: #e6eaf2;
+  --text-2: #a3adbf;
+  --text-3: #6c7686;
+}

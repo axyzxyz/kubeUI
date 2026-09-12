@@ -1,0 +1,21 @@
+# 构建/发布上下文中不需要的文件
+.git
+.github
+bin/
+dist/
+*.db
+*.sqlite
+*.out
+
+# 前端依赖与中间产物(Dockerfile 内自行 npm install/build)
+frontend/node_modules/
+frontend/dist/
+
+# 文档
+docs/
+README.md
+
+# 本地配置与密钥
+deploy/config.yaml
+*.kubeconfig
+.env*

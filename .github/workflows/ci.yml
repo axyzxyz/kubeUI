@@ -1,0 +1,89 @@
+name: ci
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  commitlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - run: npx --yes commitlint --from "origin/${{ github.base_ref }}" --to HEAD
+        if: github.event_name == 'pull_request'
+
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: backend/go.mod
+          cache-dependency-path: backend/go.sum
+      # 后端代码由并行开发提供,若 go.mod 尚不存在则先跳过(出现后即生效)
+      - name: Check module exists
+        id: check
+        run: echo "exists=$(test -f go.mod && echo true || echo false)" >> "$GITHUB_OUTPUT"
+      - if: steps.check.outputs.exists == 'true'
+        run: |
+          gofmt -l . > fmt.out; cat fmt.out
+          test ! -s fmt.out
+      - if: steps.check.outputs.exists == 'true'
+        uses: golangci/golangci-lint-action@v6
+        with:
+          working-directory: backend
+      - if: steps.check.outputs.exists == 'true'
+        run: go test -race -covermode=atomic -coverprofile=cover.out ./...
+      - if: steps.check.outputs.exists == 'true'
+        run: go tool cover -func=cover.out
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Check package exists
+        id: check
+        run: echo "exists=$(test -f package.json && echo true || echo false)" >> "$GITHUB_OUTPUT"
+      - if: steps.check.outputs.exists == 'true'
+        run: |
+          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+      - if: steps.check.outputs.exists == 'true'
+        run: npm run typecheck --if-present
+      - if: steps.check.outputs.exists == 'true'
+        run: npm run lint --if-present
+      - if: steps.check.outputs.exists == 'true'
+        run: npm run test --if-present
+
+  build:
+    needs: [backend, frontend]
+    if: always() && !failure() && !cancelled()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: make build
+      - name: Build image
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: deploy/Dockerfile
+          push: false
+          tags: v911:${{ github.sha }}
