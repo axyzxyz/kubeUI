@@ -13,8 +13,8 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/v911/backend/internal/pkg/errcode"
-	"github.com/v911/backend/internal/store"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/errcode"
+	"github.com/axyzxyz/kubeui/backend/internal/store"
 )
 
 // Token 有效期约定(01-architecture §2)。

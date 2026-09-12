@@ -6,9 +6,9 @@ interface StoredToken {
   user: { name: string; roles: string[] };
 }
 
-const TOKEN_KEY = 'v911.auth';
-const THEME_KEY = 'v911.theme';
-const NS_KEY = 'v911.namespace';
+const TOKEN_KEY = 'kubeui.auth';
+const THEME_KEY = 'kubeui.theme';
+const NS_KEY = 'kubeui.namespace';
 
 export type { StoredToken };
 

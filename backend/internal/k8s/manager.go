@@ -15,7 +15,7 @@ import (
 	"k8s.io/client-go/restmapper"
 	metricsv "k8s.io/metrics/pkg/client/clientset/versioned"
 
-	"github.com/v911/backend/internal/pkg/logx"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/logx"
 )
 
 // 状态机阈值与周期(01-architecture §3.1/§3.5)。

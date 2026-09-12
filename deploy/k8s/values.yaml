@@ -1,11 +1,11 @@
-# v911 Helm values
-# 安装:helm install v911 ./deploy/k8s -f your-values.yaml
+# kubeui Helm values
+# 安装:helm install kubeui ./deploy/k8s -f your-values.yaml
 # 注:本 chart 手写模板,如本机无 helm,可用
-#   docker run --rm -v $(pwd):/chart alpine/helm template v911 /chart
+#   docker run --rm -v $(pwd):/chart alpine/helm template kubeui /chart
 # 验证语法。
 
 image:
-  repository: ghcr.io/example/v911
+  repository: ghcr.io/axyzxyz/kubeui
   tag: ""            # 留空使用 .Chart.AppVersion
   pullPolicy: IfNotPresent
 
@@ -28,10 +28,10 @@ server:
   ingress:
     enabled: true
     className: nginx
-    host: v911.example.com
+    host: kubeui.example.com
     tls:
       enabled: true
-      secretName: v911-tls
+      secretName: kubeui-tls
     # WebSocket 已在模板中注入 nginx 必要注解(proxy-read-timeout 等)
 
   # 已存在的 Secret 名(包含 masterKey / adminPassword / jwtSecret);
@@ -63,11 +63,11 @@ db:
 ingressAnnotations: {}
 
 # ── agent 子部署 ────────────────────────────────────────────
-# 说明:Agent 部署在【被管集群】,不在 v911 所在集群;此开关仅用于
+# 说明:Agent 部署在【被管集群】,不在 kubeui 所在集群;此开关仅用于
 # "同集群自管" 演示场景。跨集群请用独立 agent 部署(见 templates/agent.yaml
 # 单独渲染,或 helm template --set agent.enabled=true 后 apply 到被管集群)。
 agent:
   enabled: false
-  serverUrl: ""             # 必填,V911_SERVER_URL
-  enrollToken: ""           # 必填,接入向导生成,V911_ENROLL_TOKEN
+  serverUrl: ""             # 必填,KUBEUI_SERVER_URL
+  enrollToken: ""           # 必填,接入向导生成,KUBEUI_ENROLL_TOKEN
   replicaCount: 1

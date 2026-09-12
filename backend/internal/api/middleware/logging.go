@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/v911/backend/internal/pkg/logx"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/logx"
 )
 
 // Logging 输出结构化访问日志(method、path、status、耗时、request_id)。

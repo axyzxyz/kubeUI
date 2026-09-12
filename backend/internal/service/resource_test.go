@@ -28,8 +28,8 @@ import (
 	metricsfake "k8s.io/metrics/pkg/client/clientset/versioned/fake"
 	"time"
 
-	"github.com/v911/backend/internal/k8s"
-	"github.com/v911/backend/internal/pkg/errcode"
+	"github.com/axyzxyz/kubeui/backend/internal/k8s"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/errcode"
 )
 
 // base64StdEncode 编码字符串为标准 base64。

@@ -86,7 +86,7 @@ class WsManager {
   private wsUrl(): string {
     const proto = window.location.protocol === 'https:' ? 'wss' : 'ws';
     const token =
-      (JSON.parse(localStorage.getItem('v911.auth') ?? 'null') as { accessToken: string } | null)
+      (JSON.parse(localStorage.getItem('kubeui.auth') ?? 'null') as { accessToken: string } | null)
         ?.accessToken ?? '';
     return `${proto}://${window.location.host}/api/v1/watch?token=${encodeURIComponent(token)}`;
   }

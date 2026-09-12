@@ -17,10 +17,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"k8s.io/client-go/rest"
 
-	"github.com/v911/backend/internal/api/middleware"
-	"github.com/v911/backend/internal/pkg/errcode"
-	"github.com/v911/backend/internal/pkg/logx"
-	"github.com/v911/backend/internal/service"
+	"github.com/axyzxyz/kubeui/backend/internal/api/middleware"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/errcode"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/logx"
+	"github.com/axyzxyz/kubeui/backend/internal/service"
 )
 
 // k8sProxyAuthAuditPrefix 是代理审计动作前缀。

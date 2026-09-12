@@ -15,10 +15,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"k8s.io/client-go/rest"
 
-	"github.com/v911/backend/internal/config"
-	"github.com/v911/backend/internal/k8s"
-	"github.com/v911/backend/internal/service"
-	"github.com/v911/backend/internal/store"
+	"github.com/axyzxyz/kubeui/backend/internal/config"
+	"github.com/axyzxyz/kubeui/backend/internal/k8s"
+	"github.com/axyzxyz/kubeui/backend/internal/service"
+	"github.com/axyzxyz/kubeui/backend/internal/store"
 )
 
 // newProxyEnv 构建反向代理测试环境:上游 httptest 服务 + 已注册集群 + 最小路由。

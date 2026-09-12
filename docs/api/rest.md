@@ -242,7 +242,7 @@ GET /api/v1/agent/manifest?token=<enroll-token>   # 匿名;token 校验但不消
 ```
 
 `serverUrl` 取 config `server.externalUrl`;token 注入 Deployment env(响应包含
-token 原文,禁止落日志)。Agent 镜像可用 `V911_AGENT_IMAGE` 覆盖。
+token 原文,禁止落日志)。Agent 镜像可用 `KUBEUI_AGENT_IMAGE` 覆盖。
 
 ### 3.7 平台 K8s 反向代理(已实现)
 

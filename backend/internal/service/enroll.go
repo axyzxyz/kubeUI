@@ -10,10 +10,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/v911/backend/internal/model"
-	"github.com/v911/backend/internal/pkg/errcode"
-	"github.com/v911/backend/internal/pkg/logx"
-	"github.com/v911/backend/internal/store"
+	"github.com/axyzxyz/kubeui/backend/internal/model"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/errcode"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/logx"
+	"github.com/axyzxyz/kubeui/backend/internal/store"
 )
 
 // Enrollment Token 约定(01-architecture §4.1):默认 24h 有效,一次性,

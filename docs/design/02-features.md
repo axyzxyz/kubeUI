@@ -20,7 +20,7 @@
 ## 1. 功能全景图
 
 ```text
-v911 多集群 K8s 管理 Dashboard
+kubeUI 多集群 K8s 管理 Dashboard
 ├── 1. 平台基座
 │   ├── 认证:登录 / JWT 刷新 / (V2)OIDC
 │   ├── 多用户与平台 RBAC:admin / operator / viewer
@@ -47,7 +47,7 @@ v911 多集群 K8s 管理 Dashboard
 ├── 6. 客户端接入
 │   ├── 客户端 kubeconfig 临时下载链接                    [V1]
 │   ├── Agent 安装指引页面(one-liner / Helm)             [V1]
-│   └── v911 CLI(登录/浏览/日志/kubeconfig 签发)         [V2]
+│   └── kubeUI CLI(登录/浏览/日志/kubeconfig 签发)         [V2]
 └── 7. 运维支撑
     ├── 单二进制 / Docker / Helm 部署
     └── SQLite → PostgreSQL 存储切换                      [V1]
@@ -144,7 +144,7 @@ v911 多集群 K8s 管理 Dashboard
 | 客户端 kubeconfig 签发 + 一次性下载链接 | P1 | V1 | TTL 24h 默认、可撤销、服务端 `/k8s/{cluster}` 代理 |
 | Agent 安装指引页面(生成 one-liner YAML / Helm 命令) | P1 | V1 | 页面按集群生成 enroll token 并渲染安装命令 |
 | 平台代理兼容 exec/watch/attach 流式端点 | P1 | V1 | kubectl logs -f、exec 经代理可用 |
-| v911 CLI(登录/集群列表/资源浏览/日志/kubeconfig) | P2 | V2 | Cobra,复用 REST/WS,无私有协议 |
+| kubeUI CLI(登录/集群列表/资源浏览/日志/kubeconfig) | P2 | V2 | Cobra,复用 REST/WS,无私有协议 |
 | exec credential plugin(kubeconfig 免明文 token) | P2 | V2 | CLI 作为 credential plugin |
 
 ### 2.8 部署与运维支撑

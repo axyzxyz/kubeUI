@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"sort"
 
-	"github.com/v911/backend/internal/model"
-	"github.com/v911/backend/internal/pkg/errcode"
-	"github.com/v911/backend/internal/store"
+	"github.com/axyzxyz/kubeui/backend/internal/model"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/errcode"
+	"github.com/axyzxyz/kubeui/backend/internal/store"
 )
 
 // RoleService 提供 RBAC 管理:角色 / 用户组 / 角色组 / 授权(grants)CRUD

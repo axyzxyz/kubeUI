@@ -6,7 +6,7 @@ import (
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"sigs.k8s.io/yaml"
 
-	"github.com/v911/backend/internal/model"
+	"github.com/axyzxyz/kubeui/backend/internal/model"
 )
 
 // yamlMarshal 将任意 K8s 对象编码为 YAML。

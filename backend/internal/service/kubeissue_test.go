@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/v911/backend/internal/pkg/errcode"
-	"github.com/v911/backend/internal/store"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/errcode"
+	"github.com/axyzxyz/kubeui/backend/internal/store"
 )
 
 // newKubeconfigService 构造基于 sqlite 内存库的 KubeconfigService。
@@ -23,7 +23,7 @@ func newKubeconfigService(t *testing.T) *KubeconfigService {
 	}); err != nil {
 		t.Fatalf("seed cluster: %v", err)
 	}
-	return NewKubeconfigService(store.NewIssuedKubeconfigRepo(db), clusters, "https://v911.example.com")
+	return NewKubeconfigService(store.NewIssuedKubeconfigRepo(db), clusters, "https://kubeUI.example.com")
 }
 
 // TestKubeconfigIssueDownloadOnce 覆盖签发 → 一次性下载 → 二次下载拒绝。
@@ -47,7 +47,7 @@ func TestKubeconfigIssueDownloadOnce(t *testing.T) {
 		t.Fatalf("download: %v", err)
 	}
 	for _, want := range []string{
-		"server: https://v911.example.com/k8s/prod", "token: " + created.Token,
+		"server: https://kubeUI.example.com/k8s/prod", "token: " + created.Token,
 		"current-context:", "insecure-skip-tls-verify: true",
 	} {
 		if !strings.Contains(yaml, want) {

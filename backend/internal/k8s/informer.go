@@ -12,7 +12,7 @@ import (
 	dynamicinformer "k8s.io/client-go/dynamic/dynamicinformer"
 	"k8s.io/client-go/tools/cache"
 
-	"github.com/v911/backend/internal/pkg/logx"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/logx"
 )
 
 const (

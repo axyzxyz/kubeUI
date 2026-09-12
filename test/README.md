@@ -1,11 +1,11 @@
-# v911 多集群管理平台 · 验证用例总纲
+# kubeUI 多集群管理平台 · 验证用例总纲
 
 > 面向 AI/人工验证人员:按模块拆分的全功能验证清单,每条用例含**操作步骤**与**预期结果**。
 > 发现问题请写入 `docs/test.md`(格式参照该文件既有 Bug 条目:编号、严重度、复现步骤、API/截图证据、根因定位)。
 
 ## 测试环境
 
-- 服务:`./bin/v911-server --config deploy/config-example.yaml`,监听 `:8080`,SPA 与 API 同端口
+- 服务:`./bin/kubeui-server --config deploy/config-example.yaml`,监听 `:8080`,SPA 与 API 同端口
 - 账号:`admin / admin123`(首启自动创建);可经 UI 或 `POST /api/v1/users` 创建 operator/viewer 测试账号
 - 集群:本机 k3s(kubeconfig `/etc/rancher/k3s/k3s.yaml`),注册名 `local-k3s`;建议预先部署一个多副本 nginx deployment 用于行级操作
 - API 约定:所有响应 `{code, message, data}`,`code=0` 成功;错误码表见 `docs/api/rest.md`;JWT 放 `Authorization: Bearer <token>`

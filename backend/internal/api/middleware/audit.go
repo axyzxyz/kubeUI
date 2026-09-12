@@ -10,7 +10,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/v911/backend/internal/pkg/logx"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/logx"
 )
 
 // Recorder 记录审计事件,由 service.AuditService 实现。

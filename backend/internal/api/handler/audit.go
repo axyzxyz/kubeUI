@@ -3,10 +3,10 @@ package handler
 import (
 	"github.com/gin-gonic/gin"
 
-	"github.com/v911/backend/internal/api/response"
-	"github.com/v911/backend/internal/pkg/errcode"
-	"github.com/v911/backend/internal/pkg/pagination"
-	"github.com/v911/backend/internal/service"
+	"github.com/axyzxyz/kubeui/backend/internal/api/response"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/errcode"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/pagination"
+	"github.com/axyzxyz/kubeui/backend/internal/service"
 )
 
 // GET /api/v1/audit-logs(管理员;审计记录只读,无删除接口)

@@ -6,11 +6,11 @@ import (
 
 	"k8s.io/apimachinery/pkg/runtime/schema"
 
-	"github.com/v911/backend/internal/k8s"
-	"github.com/v911/backend/internal/model"
-	"github.com/v911/backend/internal/pkg/errcode"
-	"github.com/v911/backend/internal/pkg/logx"
-	"github.com/v911/backend/internal/pkg/wsx"
+	"github.com/axyzxyz/kubeui/backend/internal/k8s"
+	"github.com/axyzxyz/kubeui/backend/internal/model"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/errcode"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/logx"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/wsx"
 )
 
 // watchResources 是 /api/v1/watch 可订阅的 resource 枚举(websocket.md §1.2)。

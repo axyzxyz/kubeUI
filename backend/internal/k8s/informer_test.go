@@ -13,7 +13,7 @@ import (
 	dynamicfake "k8s.io/client-go/dynamic/fake"
 	"k8s.io/client-go/kubernetes/scheme"
 
-	"github.com/v911/backend/internal/pkg/wsx"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/wsx"
 )
 
 func podsGVR() schema.GroupVersionResource {

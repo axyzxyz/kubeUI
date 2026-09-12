@@ -17,7 +17,7 @@
 
 | # | 用例 | 步骤 | 预期 |
 |---|---|---|---|
-| C-09 | 重启后运行时恢复 | 杀掉 v911-server 进程并等自动重启 | **无需重新注册**:集群列表直接出现 local-k3s 并收敛为 ready;资源页可正常访问(此前会 40401) |
+| C-09 | 重启后运行时恢复 | 杀掉 kubeui-server 进程并等自动重启 | **无需重新注册**:集群列表直接出现 local-k3s 并收敛为 ready;资源页可正常访问(此前会 40401) |
 | C-10 | 密钥漂移降级 | 用空 masterKey 启动后重启(密钥随机) | 集群置 **offline**,message 说明「master key mismatch, rotate kubeconfig」;记录不消失;资源页给明确错误而非静默失败 |
 | C-11 | 旧 token 失效 | 重启后用重启前的 accessToken | 401;前端静默 refresh(新的 jwtSecret 下 refresh 也可能失效则跳登录,属预期) |
 
@@ -27,8 +27,8 @@
 |---|---|---|---|
 | C-12 | Enroll Token 管理 | admin 创建 enroll-token(绑集群、ttl) | 列表可见、**token 只显示一次**、可吊销、过期自动失效 |
 | C-13 | 非授权 | viewer 创建 enroll-token | 40300 |
-| C-14 | 安装清单 | `GET /api/v1/agent/manifest?token=` | 返回可 `kubectl apply` 的 YAML(Namespace/SA/最小 RBAC/Deployment,env 注入 V911_SERVER_URL/V911_ENROLL_TOKEN) |
-| C-15 | Agent 上线 | 在被管集群 apply 清单,`V911_SERVER_URL` 指向平台 | 信令通道建立;集群 accessMode 变 **agent**、状态 ready;审计记录 |
+| C-14 | 安装清单 | `GET /api/v1/agent/manifest?token=` | 返回可 `kubectl apply` 的 YAML(Namespace/SA/最小 RBAC/Deployment,env 注入 KUBEUI_SERVER_URL/KUBEUI_ENROLL_TOKEN) |
+| C-15 | Agent 上线 | 在被管集群 apply 清单,`KUBEUI_SERVER_URL` 指向平台 | 信令通道建立;集群 accessMode 变 **agent**、状态 ready;审计记录 |
 | C-16 | Agent 模式功能一致 | agent 集群上浏览资源/日志/终端 | 与直连完全一致(TCP 透传,TLS 端到端) |
 | C-17 | Agent 断开 | 杀掉 agent pod | 集群 Degraded,message「agent 反连中」;agent 自动重连(1s→60s 退避)后恢复 ready |
 | C-18 | Token 一次性 | 同一 token 二次注册 | 40101 拒绝 |

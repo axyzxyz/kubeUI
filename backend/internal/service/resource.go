@@ -15,11 +15,11 @@ import (
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/types"
 
-	"github.com/v911/backend/internal/k8s"
-	"github.com/v911/backend/internal/model"
-	"github.com/v911/backend/internal/pkg/errcode"
-	"github.com/v911/backend/internal/pkg/logx"
-	"github.com/v911/backend/internal/pkg/pagination"
+	"github.com/axyzxyz/kubeui/backend/internal/k8s"
+	"github.com/axyzxyz/kubeui/backend/internal/model"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/errcode"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/logx"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/pagination"
 )
 
 // k8sCallTimeout 是所有 K8s 出站调用的统一超时(04 §2.3)。

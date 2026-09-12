@@ -12,7 +12,7 @@ const app = createApp(App);
 // 供无 DevTools 的自动化环境定位"整页交互失效"类问题(BUG-03/BUG-17)。
 function reportError(kind: string, err: unknown): void {
   // eslint-disable-next-line no-console
-  console.error(`[v911] ${kind}:`, err);
+  console.error(`[kubeUI] ${kind}:`, err);
   ElNotification({
     title: `前端运行时错误(${kind})`,
     message: err instanceof Error ? `${err.message}\n${err.stack ?? ''}`.slice(0, 600) : String(err),

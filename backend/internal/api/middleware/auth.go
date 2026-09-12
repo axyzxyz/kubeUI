@@ -7,8 +7,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/v911/backend/internal/api/response"
-	"github.com/v911/backend/internal/pkg/errcode"
+	"github.com/axyzxyz/kubeui/backend/internal/api/response"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/errcode"
 )
 
 // Identity 是认证通过后的用户身份信息。

@@ -12,10 +12,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/v911/backend/internal/api/response"
-	"github.com/v911/backend/internal/pkg/crypto"
-	"github.com/v911/backend/internal/service"
-	"github.com/v911/backend/internal/store"
+	"github.com/axyzxyz/kubeui/backend/internal/api/response"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/crypto"
+	"github.com/axyzxyz/kubeui/backend/internal/service"
+	"github.com/axyzxyz/kubeui/backend/internal/store"
 )
 
 const testMasterKey = "YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXoxMjM0NTY="

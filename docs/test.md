@@ -1,11 +1,11 @@
-# v911 多集群管理平台 · 整体功能验证 Bug 报告
+# kubeUI 多集群管理平台 · 整体功能验证 Bug 报告
 
 - 测试日期:2026-09-12(两轮:第一轮 02:00–03:00,第二轮 11:40–12:50 CST)
 - 测试对象:http://localhost:8080(admin/admin123;本地 k3s v1.36.4)
 - 用例依据:`test/README.md` + `test/01~05`(验证用例总纲);设计依据 `docs/design/*`、`docs/api/*`
 - 测试方式:浏览器 GUI 黑盒(截图+DOM 双取证)+ REST/WS API 实测
 - 截图目录:`C:\Users\47910\Downloads\temp\gui-test-screenshots\`
-- **重要说明:第二轮开始前 `bin/v911-server` 与前端产物被重新构建(11:07,含新前端)。第一轮部分 GUI 结论是对旧 bundle 得出的,已逐条在新版复验并标注状态。**
+- **重要说明:第二轮开始前 `bin/kubeui-server` 与前端产物被重新构建(11:07,含新前端)。第一轮部分 GUI 结论是对旧 bundle 得出的,已逐条在新版复验并标注状态。**
 
 ---
 
@@ -68,7 +68,7 @@
 
 ### BUG-13【P1·后端】Agent 反连注册即失败,一次性 token 被烧,集群永久 Degraded
 
-- 复现(2/2 稳定复现):注册集群 `agent-k3s` → 创建 enroll token → 本机运行 `bin/v911-agent`(V911_SERVER_URL=http://localhost:8080):
+- 复现(2/2 稳定复现):注册集群 `agent-k3s` → 创建 enroll token → 本机运行 `bin/kubeui-agent`(KUBEUI_SERVER_URL=http://localhost:8080):
   ```
   agent 日志:
   WARN agent connection lost, will retry err="unexpected frame \"dial\" while registering" retry_in=1s
@@ -140,7 +140,7 @@
 | P-20 viewer 终端 | ⛔ | 被 BUG-12 阻塞(终端本身打不开) |
 | P-21~P-24 审计留痕 | ✅* | 登录/伸缩等字段齐全、无删除入口、筛选存在;k8s-proxy 记录 username 空(BUG-19) |
 | P-25 审计时间 | ✅ | 相对时间 |
-| P-26/27 主题 | ✅ | 亮暗切换即时生效;localStorage v911.theme 持久化 |
+| P-26/27 主题 | ✅ | 亮暗切换即时生效;localStorage kubeUI.theme 持久化 |
 
 ### 02 集群管理
 
@@ -220,8 +220,8 @@
 | D-05 CGO | ⛔ | 未执行交叉编译 |
 | D-06 Docker 构建 | ⛔ | 本机无 docker |
 | D-07 Helm | ❌ | deploy/ 无 chart(BUG-18) |
-| D-08 env 覆盖 | ✅ | `V911_SERVER__ADDR=":8099"` 生效,双下划线嵌套规则可用 |
-| D-09 Windows 产物 | ✅* | bin/windows/ 存在 v911-desktop.exe 与 v911-lite.exe(运行时行为未测) |
+| D-08 env 覆盖 | ✅ | `KUBEUI_SERVER__ADDR=":8099"` 生效,双下划线嵌套规则可用 |
+| D-09 Windows 产物 | ✅* | bin/windows/ 存在 kubeUI-desktop.exe 与 kubeUI-lite.exe(运行时行为未测) |
 | D-10~D-13 lite/desktop 运行 | ⛔ | 需 Windows GUI 双击验证,未覆盖 |
 | D-14 工程门禁 | ⛔ | go/npm 不在本 shell PATH,建议 CI 执行 |
 
@@ -229,7 +229,7 @@
 
 ## 五、测试环境与预置操作说明
 
-1. 两轮之间 `bin/v911-server`+前端被另一会话重建(11:07),第二轮全部结论基于新构建;第一轮报告中对旧 bundle 的 GUI 结论已在第二节逐条复验修订。
-2. 测试期间同机另一会话的 desktop 构建脚本会 `kill v911-server`,曾造成第一轮多次 "Failed to fetch" 与懒加载缓存失败;已用自动重启循环保持在线。第一轮"整页点击失效"现象在污染期波及全站,干净环境复验后仅剩 BUG-17(users/audit 两页)。
+1. 两轮之间 `bin/kubeui-server`+前端被另一会话重建(11:07),第二轮全部结论基于新构建;第一轮报告中对旧 bundle 的 GUI 结论已在第二节逐条复验修订。
+2. 测试期间同机另一会话的 desktop 构建脚本会 `kill kubeui-server`,曾造成第一轮多次 "Failed to fetch" 与懒加载缓存失败;已用自动重启循环保持在线。第一轮"整页点击失效"现象在污染期波及全站,干净环境复验后仅剩 BUG-17(users/audit 两页)。
 3. 预置/操作痕迹:API 注册了 `local-k3s`、`wizard-k3s`(UI 向导注册后已注销)、`multi-kc`(已删)、`agent-k3s`(已删);创建用户 op1(已删)、op2/v1user(留存);对 nginx-test 执行过伸缩 1↔2、重启、Pod 删建;创建并删除了 cm-yaml-test/cm-json-test 等测试 ConfigMap;签发 kubeconfig 凭证 2 条(1 条已撤销)。全部为本地测试集群。
 4. 阻塞链:BUG-12(Pod 详情 404)→ 阻塞 Pod 详情抽屉、行级终端、实时日志 GUI 入口;BUG-13 → 阻塞 Agent 全链路;BUG-14 → 阻塞客户端 kubeconfig 使用。

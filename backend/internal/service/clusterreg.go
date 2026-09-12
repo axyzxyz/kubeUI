@@ -10,11 +10,11 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
 
-	"github.com/v911/backend/internal/model"
-	"github.com/v911/backend/internal/pkg/crypto"
-	"github.com/v911/backend/internal/pkg/errcode"
-	"github.com/v911/backend/internal/pkg/logx"
-	"github.com/v911/backend/internal/store"
+	"github.com/axyzxyz/kubeui/backend/internal/model"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/crypto"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/errcode"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/logx"
+	"github.com/axyzxyz/kubeui/backend/internal/store"
 )
 
 // probeTimeout 是注册时拨测目标集群 /version 的超时(01-architecture §3.1)。

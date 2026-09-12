@@ -16,7 +16,7 @@ import (
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
 
-	"github.com/v911/backend/internal/model"
+	"github.com/axyzxyz/kubeui/backend/internal/model"
 )
 
 // fakeMapper 是测试用空 RESTMapper。

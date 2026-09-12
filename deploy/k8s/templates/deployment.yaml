@@ -1,54 +1,54 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "v911.name" . }}-server
+  name: {{ include "kubeui.name" . }}-server
   labels:
-    app.kubernetes.io/name: {{ include "v911.name" . }}
+    app.kubernetes.io/name: {{ include "kubeui.name" . }}
     app.kubernetes.io/component: server
 spec:
   replicas: {{ .Values.server.replicaCount }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "v911.name" . }}
+      app.kubernetes.io/name: {{ include "kubeui.name" . }}
       app.kubernetes.io/component: server
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: {{ include "v911.name" . }}
+        app.kubernetes.io/name: {{ include "kubeui.name" . }}
         app.kubernetes.io/component: server
     spec:
       containers:
         - name: server
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          args: ["--config", "/etc/v911/config.yaml"]
+          args: ["--config", "/etc/kubeui/config.yaml"]
           ports:
             - name: http
               containerPort: 8080
           env:
-            - name: V911_MASTER_KEY
+            - name: KUBEUI_MASTER_KEY
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.server.existingSecret | default (printf "%s-secret" (include "v911.name" .)) }}
+                  name: {{ .Values.server.existingSecret | default (printf "%s-secret" (include "kubeui.name" .)) }}
                   key: masterKey
-            - name: V911_ADMIN_PASSWORD
+            - name: KUBEUI_ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.server.existingSecret | default (printf "%s-secret" (include "v911.name" .)) }}
+                  name: {{ .Values.server.existingSecret | default (printf "%s-secret" (include "kubeui.name" .)) }}
                   key: adminPassword
-            - name: V911_AUTH_JWT_SECRET
+            - name: KUBEUI_AUTH_JWT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.server.existingSecret | default (printf "%s-secret" (include "v911.name" .)) }}
+                  name: {{ .Values.server.existingSecret | default (printf "%s-secret" (include "kubeui.name" .)) }}
                   key: jwtSecret
-            - name: V911_DB_DRIVER
+            - name: KUBEUI_DB_DRIVER
               value: {{ .Values.db.driver | quote }}
             {{- if eq .Values.db.driver "postgres" }}
-            - name: V911_DB_DSN
+            - name: KUBEUI_DB_DSN
               value: {{ .Values.db.dsn | quote }}
             {{- else }}
-            - name: V911_DB_DSN
-              value: /data/v911.db
+            - name: KUBEUI_DB_DSN
+              value: /data/kubeui.db
             {{- end }}
           readinessProbe:
             httpGet:
@@ -77,6 +77,6 @@ spec:
             claimName: {{ .Values.db.sqlite.persistence.existingClaim }}
           {{- else }}
           persistentVolumeClaim:
-            claimName: {{ include "v911.name" . }}-data
+            claimName: {{ include "kubeui.name" . }}-data
           {{- end }}
         {{- end }}

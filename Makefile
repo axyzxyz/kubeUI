@@ -1,4 +1,4 @@
-# v911 根 Makefile —— 唯一任务入口(04-coding-standards.md §6.1,包管理器按本项目实际使用 npm)
+# kubeui 根 Makefile —— 唯一任务入口(04-coding-standards.md §6.1,包管理器按本项目实际使用 npm)
 #
 # 常用目标:
 #   make lint    后端 gofmt/vet + 前端 eslint(均容错,工具缺失不阻塞)
@@ -77,11 +77,11 @@ build-backend:
 	fi
 	@mkdir -p $(BIN_DIR)
 	@command -v go >/dev/null 2>&1 || { echo "ERROR: 未安装 Go(需要 1.23+),请先安装: https://go.dev/dl/"; exit 1; }
-	cd $(BACKEND_DIR) && CGO_ENABLED=0 go build -ldflags="$(LDFLAGS)" -o ../$(BIN_DIR)/v911-server ./cmd/server \
-		|| { echo "ERROR: v911-server 构建失败,请检查 $(BACKEND_DIR)/cmd/server 是否可编译"; exit 1; }
-	cd $(BACKEND_DIR) && CGO_ENABLED=0 go build -ldflags="$(LDFLAGS)" -o ../$(BIN_DIR)/v911-agent ./cmd/agent \
-		|| { echo "ERROR: v911-agent 构建失败,请检查 $(BACKEND_DIR)/cmd/agent 是否可编译"; exit 1; }
-	@echo ">> 产出: $(BIN_DIR)/v911-server  $(BIN_DIR)/v911-agent (version: $(VERSION))"
+	cd $(BACKEND_DIR) && CGO_ENABLED=0 go build -ldflags="$(LDFLAGS)" -o ../$(BIN_DIR)/kubeui-server ./cmd/server \
+		|| { echo "ERROR: kubeui-server 构建失败,请检查 $(BACKEND_DIR)/cmd/server 是否可编译"; exit 1; }
+	cd $(BACKEND_DIR) && CGO_ENABLED=0 go build -ldflags="$(LDFLAGS)" -o ../$(BIN_DIR)/kubeui-agent ./cmd/agent \
+		|| { echo "ERROR: kubeui-agent 构建失败,请检查 $(BACKEND_DIR)/cmd/agent 是否可编译"; exit 1; }
+	@echo ">> 产出: $(BIN_DIR)/kubeui-server  $(BIN_DIR)/kubeui-agent (version: $(VERSION))"
 
 all: lint test build
 
@@ -89,5 +89,5 @@ clean:
 	rm -rf $(BIN_DIR) $(BACKEND_DIR)/cover.out $(FRONTEND_DIR)/dist
 
 run: build-backend
-	./$(BIN_DIR)/v911-server --config deploy/config-example.yaml
+	./$(BIN_DIR)/kubeui-server --config deploy/config-example.yaml
 

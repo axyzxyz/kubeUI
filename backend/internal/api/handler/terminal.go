@@ -14,11 +14,11 @@ import (
 	k8sscheme "k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/tools/remotecommand"
 
-	"github.com/v911/backend/internal/api/middleware"
-	"github.com/v911/backend/internal/pkg/errcode"
-	"github.com/v911/backend/internal/pkg/logx"
-	"github.com/v911/backend/internal/pkg/wsx"
-	"github.com/v911/backend/internal/service"
+	"github.com/axyzxyz/kubeui/backend/internal/api/middleware"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/errcode"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/logx"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/wsx"
+	"github.com/axyzxyz/kubeui/backend/internal/service"
 )
 
 // terminal 协议帧(01-architecture §6.2):文本帧为控制,二进制帧为数据。

@@ -11,13 +11,13 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/v911/backend/internal/api/middleware"
-	"github.com/v911/backend/internal/api/response"
-	"github.com/v911/backend/internal/k8s"
-	"github.com/v911/backend/internal/model"
-	"github.com/v911/backend/internal/pkg/crypto"
-	"github.com/v911/backend/internal/service"
-	"github.com/v911/backend/internal/store"
+	"github.com/axyzxyz/kubeui/backend/internal/api/middleware"
+	"github.com/axyzxyz/kubeui/backend/internal/api/response"
+	"github.com/axyzxyz/kubeui/backend/internal/k8s"
+	"github.com/axyzxyz/kubeui/backend/internal/model"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/crypto"
+	"github.com/axyzxyz/kubeui/backend/internal/service"
+	"github.com/axyzxyz/kubeui/backend/internal/store"
 )
 
 // newRBACTestRouter 构造带完整 RBAC 依赖的路由:注入 permChecker 与 authorizer

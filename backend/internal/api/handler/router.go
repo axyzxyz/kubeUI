@@ -7,11 +7,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/v911/backend/internal/api/middleware"
-	"github.com/v911/backend/internal/config"
-	"github.com/v911/backend/internal/k8s"
-	"github.com/v911/backend/internal/service"
-	"github.com/v911/backend/internal/web"
+	"github.com/axyzxyz/kubeui/backend/internal/api/middleware"
+	"github.com/axyzxyz/kubeui/backend/internal/config"
+	"github.com/axyzxyz/kubeui/backend/internal/k8s"
+	"github.com/axyzxyz/kubeui/backend/internal/service"
+	"github.com/axyzxyz/kubeui/backend/internal/web"
 )
 
 // Deps 是 handler 层依赖集合,由 main 装配注入。

@@ -10,10 +10,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 
-	"github.com/v911/backend/internal/api/middleware"
-	"github.com/v911/backend/internal/pkg/errcode"
-	"github.com/v911/backend/internal/pkg/logx"
-	"github.com/v911/backend/internal/pkg/wsx"
+	"github.com/axyzxyz/kubeui/backend/internal/api/middleware"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/errcode"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/logx"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/wsx"
 )
 
 // WS 心跳约定(04 §4.5):客户端 25s 发 ping,服务端 30s 无任何帧断开。

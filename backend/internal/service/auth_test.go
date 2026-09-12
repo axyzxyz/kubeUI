@@ -7,7 +7,7 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/v911/backend/internal/store"
+	"github.com/axyzxyz/kubeui/backend/internal/store"
 )
 
 // newTestStore 打开内存 sqlite 并完成种子数据,供 service 层测试使用。

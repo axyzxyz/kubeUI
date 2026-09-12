@@ -4,9 +4,9 @@ import (
 	"context"
 	"sync"
 
-	"github.com/v911/backend/internal/model"
-	"github.com/v911/backend/internal/pkg/pagination"
-	"github.com/v911/backend/internal/store"
+	"github.com/axyzxyz/kubeui/backend/internal/model"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/pagination"
+	"github.com/axyzxyz/kubeui/backend/internal/store"
 )
 
 // AuditEntry 是待落库的审计事件(与中间件采集字段一一对应)。

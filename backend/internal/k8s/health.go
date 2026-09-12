@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/v911/backend/internal/pkg/logx"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/logx"
 )
 
 // runHealth 是单集群健康检查循环(受控生命周期 worker):周期探活 /readyz,

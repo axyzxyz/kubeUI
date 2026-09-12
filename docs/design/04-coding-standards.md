@@ -23,7 +23,7 @@
 ### 1.1 目录树
 
 ```text
-v911/
+kubeUI/
 ├── backend/                     # Go 后端(单模块,单二进制)
 │   ├── cmd/
 │   │   └── server/
@@ -42,7 +42,7 @@ v911/
 │   │   ├── pkg/                 # 可被 internal 各层共享的工具(errcode / logx / pagination / wsx)
 │   │   └── config/              # 配置加载(字段与 deploy/config-example.yaml 对应)
 │   ├── migrations/              # 若引入本地存储(如 sqlite)的 schema 变更
-│   ├── go.mod                   # module github.com/<org>/v911/backend
+│   ├── go.mod                   # module github.com/<org>/kubeUI/backend
 │   └── .golangci.yml
 ├── frontend/                    # Vue 3 + TS + Vite
 │   ├── src/
@@ -1051,7 +1051,7 @@ test-frontend:
 build: build-backend build-frontend
 
 build-backend:
-	cd $(BACKEND_DIR) && CGO_ENABLED=0 go build -ldflags="-s -w -X main.version=$(shell git describe --tags --always)" -o ../bin/v911-server ./cmd/server
+	cd $(BACKEND_DIR) && CGO_ENABLED=0 go build -ldflags="-s -w -X main.version=$(shell git describe --tags --always)" -o ../bin/kubeui-server ./cmd/server
 
 build-frontend:
 	cd frontend && pnpm build

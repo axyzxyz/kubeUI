@@ -29,7 +29,7 @@ async function onSubmit(): Promise<void> {
 <template>
   <div class="login-page">
     <div class="card">
-      <h1 class="title">v911 多集群管理平台</h1>
+      <h1 class="title">kubeUI 多集群管理平台</h1>
       <el-form label-position="top" @submit.prevent="onSubmit">
         <el-form-item label="用户名">
           <el-input v-model="username" autocomplete="username" />

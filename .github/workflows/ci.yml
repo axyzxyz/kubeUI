@@ -86,4 +86,4 @@ jobs:
           context: .
           file: deploy/Dockerfile
           push: false
-          tags: v911:${{ github.sha }}
+          tags: kubeui:${{ github.sha }}

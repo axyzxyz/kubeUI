@@ -21,7 +21,7 @@ function onUserCommand(command: string): void {
 
 <template>
   <header class="topbar">
-    <div class="logo" @click="router.push('/clusters')">v911</div>
+    <div class="logo" @click="router.push('/clusters')">kubeUI</div>
     <ClusterSwitcher />
     <NamespaceSwitcher />
     <div class="spacer" />

@@ -26,7 +26,7 @@ type Server struct {
 	// kubectl/Lens 等客户端出于安全策略不会经明文 HTTP 发送 Bearer 凭证,
 	// 客户端 kubeconfig 场景(01 §5.2)必须启用 HTTPS。
 	TLS TLS `json:"tls"`
-	// ExternalURL 平台对外可访问的基础地址(如 https://v911.example.com),
+	// ExternalURL 平台对外可访问的基础地址(如 https://kubeUI.example.com),
 	// 用于渲染 Agent manifest 的 serverUrl 与签发 kubeconfig 的 server 字段。
 	ExternalURL string `json:"externalUrl"`
 }
@@ -35,7 +35,7 @@ type Server struct {
 type Database struct {
 	// Driver 支持 sqlite(默认)与 postgres。
 	Driver string `json:"driver"`
-	// DSN 为空时 sqlite 使用工作目录下 data/v911.db。
+	// DSN 为空时 sqlite 使用工作目录下 data/kubeui.db。
 	DSN string `json:"dsn"`
 }
 
@@ -68,9 +68,9 @@ type Config struct {
 	Log      Log      `json:"log"`
 }
 
-const envPrefix = "V911_"
+const envPrefix = "KUBEUI_"
 
-// Load 加载配置:path 为空时跳过文件,环境变量 V911_* 始终覆盖。
+// Load 加载配置:path 为空时跳过文件,环境变量 KUBEUI_* 始终覆盖。
 func Load(path string) (*Config, error) {
 	k := koanf.New(".")
 	if path != "" {
@@ -78,7 +78,7 @@ func Load(path string) (*Config, error) {
 			return nil, fmt.Errorf("load config file %s: %w", path, err)
 		}
 	}
-	// V911_SERVER__ADDR 风格:双下划线映射嵌套。
+	// KUBEUI_SERVER__ADDR 风格:双下划线映射嵌套。
 	if err := k.Load(env.Provider(envPrefix, ".", func(s string) string {
 		return strings.ReplaceAll(strings.ToLower(strings.TrimPrefix(s, envPrefix)), "__", ".")
 	}), nil); err != nil {
@@ -93,9 +93,9 @@ func Load(path string) (*Config, error) {
 
 	// 敏感项优先取环境变量,避免落入 YAML。
 	cfg.Security.MasterKey = firstNonEmpty(
-		os.Getenv("V911_MASTER_KEY"), k.String("security.masterKey"))
+		os.Getenv("KUBEUI_MASTER_KEY"), k.String("security.masterKey"))
 	cfg.Security.JWTSecret = firstNonEmpty(
-		os.Getenv("V911_JWT_SECRET"), k.String("auth.jwtSecret"))
+		os.Getenv("KUBEUI_JWT_SECRET"), k.String("auth.jwtSecret"))
 
 	if cfg.Security.MasterKey == "" {
 		key, err := generateRandomKeyB64()
@@ -143,7 +143,7 @@ func applyDefaults(cfg *Config) {
 		cfg.Database.Driver = "sqlite"
 	}
 	if cfg.Database.DSN == "" && cfg.Database.Driver == "sqlite" {
-		cfg.Database.DSN = "data/v911.db"
+		cfg.Database.DSN = "data/kubeui.db"
 	}
 	if cfg.Log.Level == "" {
 		cfg.Log.Level = "info"

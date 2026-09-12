@@ -1,14 +1,14 @@
-# v911 配置示例 —— 即配置即文档
-# 用法: ./v911-server --config config.yaml
+# kubeui 配置示例 —— 即配置即文档
+# 用法: ./kubeui-server --config config.yaml
 # 字段与 backend/internal/config.Config 一一对应(见 config.go)。
 #
-# 环境变量覆盖规则(koanf,前缀 V911_):
+# 环境变量覆盖规则(koanf,前缀 KUBEUI_):
 #   嵌套字段用双下划线映射,例如:
-#     server.addr    ->  V911_SERVER__ADDR
-#     database.dsn   ->  V911_DATABASE__DSN
+#     server.addr    ->  KUBEUI_SERVER__ADDR
+#     database.dsn   ->  KUBEUI_DATABASE__DSN
 #   敏感项(优先级高于 YAML,代码中特殊处理):
-#     security.masterKey ->  V911_MASTER_KEY
-#     auth.jwtSecret     ->  V911_JWT_SECRET
+#     security.masterKey ->  KUBEUI_MASTER_KEY
+#     auth.jwtSecret     ->  KUBEUI_JWT_SECRET
 # 秘密类字段生产环境推荐只用环境变量注入,不落 YAML。
 
 # ── HTTP 服务(server.addr / readTimeout / writeTimeout,秒)──
@@ -23,10 +23,10 @@ server:
 database:
   # 驱动: sqlite(默认) | postgres
   driver: sqlite
-  # sqlite: 文件路径(目录需存在且可写);空字符串时默认 data/v911.db,首启自动建表
+  # sqlite: 文件路径(目录需存在且可写);空字符串时默认 data/kubeui.db,首启自动建表
   # postgres: 标准 DSN,例:
-  #   postgres://v911:password@localhost:5432/v911?sslmode=disable
-  dsn: "data/v911.db"
+  #   postgres://kubeui:password@localhost:5432/kubeui?sslmode=disable
+  dsn: "data/kubeui.db"
 
 # ── 安全 ────────────────────────────────────────────────────
 security:
@@ -34,18 +34,18 @@ security:
   # 生成: openssl rand -base64 32
   # ⚠️ 首次启动使用后不可更换,否则已加密的 kubeconfig 无法解密
   # ⚠️ 未设置时服务端会用随机临时密钥启动(仅适合开发,重启后已加密数据不可读)
-  # 环境变量覆盖: V911_MASTER_KEY(优先级高于本文件)
+  # 环境变量覆盖: KUBEUI_MASTER_KEY(优先级高于本文件)
   # 客户端 kubeconfig(kubectl/Lens)必须经 HTTPS 才会发送 Bearer 凭证;
   # 两项都设置时服务以 HTTPS 监听(证书可用 openssl req -x509 自签生成)
   tlsCertFile: ""
   tlsKeyFile: ""
-  masterKey: "344GcaeqSs4HKnwfnaO1oevRYPiYh9XW+U+7qBPze/4="  # 本地开发/测试环境固定 dev key;生产务必更换(V911_MASTER_KEY 优先)
+  masterKey: "344GcaeqSs4HKnwfnaO1oevRYPiYh9XW+U+7qBPze/4="  # 本地开发/测试环境固定 dev key;生产务必更换(KUBEUI_MASTER_KEY 优先)
 
 # ── 认证 / JWT ──────────────────────────────────────────────
 auth:
   # JWT(HS256)签名密钥;未设置时用随机临时密钥(重启后 token 失效,仅开发可用)
   # 生产必须设置,多实例部署所有实例必须一致
-  # 环境变量覆盖: V911_JWT_SECRET(优先级高于本文件)
+  # 环境变量覆盖: KUBEUI_JWT_SECRET(优先级高于本文件)
   # token TTL 约定:access 2h / refresh 7d(见设计文档 01 §7.2)
   jwtSecret: ""
 
@@ -57,9 +57,9 @@ log:
   format: "json"
 
 # ── 附:初始管理员与 Agent 配置 ───────────────────────────────
-# 初始管理员账号 admin 在首次启动时自动创建,密码经 V911_ADMIN_PASSWORD
+# 初始管理员账号 admin 在首次启动时自动创建,密码经 KUBEUI_ADMIN_PASSWORD
 # 环境变量注入(默认 admin123),不在本文件中配置。
 #
-# 以下仅由 v911-agent 二进制通过环境变量读取(不进 YAML):
-#   V911_SERVER_URL    Server 对外地址,Agent 主动 WSS 反连
-#   V911_ENROLL_TOKEN  接入向导生成的一次性 Enrollment Token(24h 有效)
+# 以下仅由 kubeui-agent 二进制通过环境变量读取(不进 YAML):
+#   KUBEUI_SERVER_URL    Server 对外地址,Agent 主动 WSS 反连
+#   KUBEUI_ENROLL_TOKEN  接入向导生成的一次性 Enrollment Token(24h 有效)

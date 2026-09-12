@@ -11,8 +11,8 @@ import (
 
 	"k8s.io/client-go/rest"
 
-	"github.com/v911/backend/internal/k8s"
-	"github.com/v911/backend/internal/pkg/wsx"
+	"github.com/axyzxyz/kubeui/backend/internal/k8s"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/wsx"
 )
 
 // fakeConn 是测试用 WatchConn,收集收到的帧。

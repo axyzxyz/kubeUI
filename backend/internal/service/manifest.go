@@ -7,21 +7,21 @@ import (
 	"os"
 	"text/template"
 
-	"github.com/v911/backend/internal/pkg/errcode"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/errcode"
 )
 
 // Agent manifest 渲染参数与默认值。
 const (
-	// ManifestDefaultImage Agent 镜像,可用 V911_AGENT_IMAGE 覆盖。
-	ManifestDefaultImage = "ghcr.io/v911/agent:latest"
+	// ManifestDefaultImage Agent 镜像,可用 KUBEUI_AGENT_IMAGE 覆盖。
+	ManifestDefaultImage = "ghcr.io/axyzxyz/kubeui-agent:latest"
 	// manifestNamespace Agent 部署命名空间。
-	manifestNamespace = "v911-system"
+	manifestNamespace = "kubeui-system"
 )
 
 // manifestTemplate 渲染 kubectl apply -f - 多文档 YAML:Deployment + 最小
 // 权限 RBAC。Agent 只与平台建立反向隧道并透传字节,不调用 K8s API,
 // 因此 Role 规则为空(仅保留 ServiceAccount 绑定骨架)。
-const manifestTemplate = `# v911 Agent 反连部署清单(集群: {{.Cluster}})
+const manifestTemplate = `# kubeUI Agent 反连部署清单(集群: {{.Cluster}})
 # 用法: kubectl apply -f manifest.yaml
 apiVersion: v1
 kind: Namespace
@@ -31,58 +31,58 @@ metadata:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: v911-agent
+  name: kubeui-agent
   namespace: {{.Namespace}}
 ---
 # 最小权限:Agent 仅做隧道透传,不访问本集群 K8s API,规则为空。
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: v911-agent-minimal
+  name: kubeui-agent-minimal
   namespace: {{.Namespace}}
 rules: []
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: v911-agent-minimal
+  name: kubeui-agent-minimal
   namespace: {{.Namespace}}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: v911-agent-minimal
+  name: kubeui-agent-minimal
 subjects:
   - kind: ServiceAccount
-    name: v911-agent
+    name: kubeui-agent
     namespace: {{.Namespace}}
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: v911-agent
+  name: kubeui-agent
   namespace: {{.Namespace}}
   labels:
-    app.kubernetes.io/name: v911-agent
-    app.kubernetes.io/part-of: v911
+    app.kubernetes.io/name: kubeui-agent
+    app.kubernetes.io/part-of: kubeUI
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/name: v911-agent
+      app.kubernetes.io/name: kubeui-agent
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: v911-agent
+        app.kubernetes.io/name: kubeui-agent
     spec:
-      serviceAccountName: v911-agent
+      serviceAccountName: kubeui-agent
       containers:
         - name: agent
           image: {{.Image}}
           imagePullPolicy: IfNotPresent
           env:
-            - name: V911_SERVER_URL
+            - name: KUBEUI_SERVER_URL
               value: "{{.ServerURL}}"
-            - name: V911_ENROLL_TOKEN
+            - name: KUBEUI_ENROLL_TOKEN
               value: "{{.Token}}"
           resources:
             requests:
@@ -112,7 +112,7 @@ func (s *EnrollService) RenderAgentManifest(ctx context.Context, token, serverUR
 	if serverURL == "" {
 		return "", errcode.New(errcode.ParamInvalid, "serverUrl is not configured")
 	}
-	image := os.Getenv("V911_AGENT_IMAGE")
+	image := os.Getenv("KUBEUI_AGENT_IMAGE")
 	if image == "" {
 		image = ManifestDefaultImage
 	}

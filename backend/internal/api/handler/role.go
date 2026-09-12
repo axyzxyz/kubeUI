@@ -7,10 +7,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/v911/backend/internal/api/middleware"
-	"github.com/v911/backend/internal/api/response"
-	"github.com/v911/backend/internal/model"
-	"github.com/v911/backend/internal/pkg/errcode"
+	"github.com/axyzxyz/kubeui/backend/internal/api/middleware"
+	"github.com/axyzxyz/kubeui/backend/internal/api/response"
+	"github.com/axyzxyz/kubeui/backend/internal/model"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/errcode"
 )
 
 // roleRequest 是创建/更新角色请求体。

@@ -28,14 +28,14 @@
                                     ┌────────────────────────────────────────────┐
                                     │                 用户侧                      │
                                     │  ┌─────────┐  ┌──────────┐  ┌───────────┐  │
-                                    │  │ Browser │  │ kubectl  │  │ v911 CLI  │  │
+                                    │  │ Browser │  │ kubectl  │  │ kubeUI CLI  │  │
                                     │  │ (Vue 3) │  │  / Lens  │  │  (可选)    │  │
                                     │  └────┬────┘  └────┬─────┘  └─────┬─────┘  │
                                     └───────┼────────────┼──────────────┼────────┘
                                             │ HTTPS      │ HTTPS        │ HTTPS
                                             │ REST + WS  │ K8s API 代理 │ REST
                                     ┌───────▼────────────▼──────────────▼────────┐
-                                    │              v911 Server(单二进制)          │
+                                    │              kubeUI Server(单二进制)          │
                                     │  ┌──────────────────────────────────────┐  │
                                     │  │ api 层: handler + middleware          │  │
                                     │  │  /api/v1/*   REST                    │  │
@@ -207,7 +207,7 @@ Cluster 对象增加 `Dialer` 字段:
 ### 4.4 Agent 部署
 
 - 交付物:① `kubectl apply -f` 的静态 YAML(含 RBAC 最小权限:仅需能建到 APIServer 的连接,不需要集群 RBAC,因为它只透传字节);② Helm chart(V1);
-- Enrollment Token 由"集群接入向导"页面生成(一次性、有效期 24h),Agent 通过环境变量 `V911_ENROLL_TOKEN` 与 `V911_SERVER_URL` 配置;
+- Enrollment Token 由"集群接入向导"页面生成(一次性、有效期 24h),Agent 通过环境变量 `KUBEUI_ENROLL_TOKEN` 与 `KUBEUI_SERVER_URL` 配置;
 - Agent 无状态、无本地存储,升级采用替换镜像滚动重启。
 
 ---
@@ -228,11 +228,11 @@ Cluster 对象增加 `Dialer` 字段:
 - `POST /api/v1/clusters/{cluster}/kubeconfigs` 创建签发请求:参数 `ttl`(默认 24h,上限 7d)、`description`;
 - 返回一次性下载链接(链接内含 10 分钟有效的 one-time code,换取 kubeconfig 后即失效;链接本身 24h 过期);
 - 签发的 kubeconfig 内容:`server: https://<平台地址>/k8s/{cluster}` + `token: <短期 Bearer>`;短期 token 服务端只存 SHA-256 哈希,可撤销、到期自动清理;
-- 该能力同时覆盖 kubectl 与 Lens(标准 kubeconfig,无需插件)。V2 增加 `exec` credential plugin 形态(v911 CLI 作为插件按需刷新 token),避免 token 明文落盘。
+- 该能力同时覆盖 kubectl 与 Lens(标准 kubeconfig,无需插件)。V2 增加 `exec` credential plugin 形态(kubeUI CLI 作为插件按需刷新 token),避免 token 明文落盘。
 
 ### 5.3 CLI(P1,可选)
 
-`v911` CLI(Cobra,同仓库 `cmd/cli`):登录、列出集群与资源、生成 kubeconfig、跟随日志。直接消费 `/api/v1` REST,不引入私有协议;终端/日志流在 CLI 中走同一 WS 端点。
+`kubeUI` CLI(Cobra,同仓库 `cmd/cli`):登录、列出集群与资源、生成 kubeconfig、跟随日志。直接消费 `/api/v1` REST,不引入私有协议;终端/日志流在 CLI 中走同一 WS 端点。
 
 ---
 
@@ -298,7 +298,7 @@ GET    /api/v1/audit-logs              GET/POST /api/v1/roles  /api/v1/role-bind
 ### 7.1 kubeconfig 加密存储
 
 - 算法:AES-256-GCM,每次写入随机 nonce,密文格式 `v1:<nonce>:<ciphertext>`,版本前缀支撑未来算法轮转;
-- 主密钥(Master Key):默认从配置 `security.masterKey` / 环境变量 `V911_MASTER_KEY` 注入(32 字节,base64);生产推荐 Helm 安装时自动生成并存 Kubernetes Secret;
+- 主密钥(Master Key):默认从配置 `security.masterKey` / 环境变量 `KUBEUI_MASTER_KEY` 注入(32 字节,base64);生产推荐 Helm 安装时自动生成并存 Kubernetes Secret;
 - 加解密封装在 `internal/pkg/crypto`,任何日志/错误/API 响应中出现 kubeconfig 内容即 CI 门禁失败(04 规范硬性约束);V2 支持外置 KMS(接口预留 `MasterKeyProvider`)。
 
 ### 7.2 凭证轮转
@@ -334,7 +334,7 @@ GET    /api/v1/audit-logs              GET/POST /api/v1/roles  /api/v1/role-bind
 
 | 形态 | 说明 |
 |---|---|
-| 单二进制 | `CGO_ENABLED=0` 构建,前端产物 `go:embed` 进二进制;`./v911-server --config config.yaml` 即起,默认 SQLite 文件 + 内存无外部依赖 |
+| 单二进制 | `CGO_ENABLED=0` 构建,前端产物 `go:embed` 进二进制;`./kubeui-server --config config.yaml` 即起,默认 SQLite 文件 + 内存无外部依赖 |
 | Docker | 多阶段构建,scratch 基础镜像 + ca-certificates;镜像内含 server 与 agent 两个入口 |
 | Helm chart(`deploy/k8s/`) | values 控制:存储 sqlite(EmptyDir/PVC)或 postgresql(external);Ingress(WS 需开启 proxy-read-timeout);Secret 注入 masterKey 与初始管理员密码;支持 replicas>1 时强制外部 PostgreSQL + 共享 JWT secret |
 | 反向代理要求 | 生产部署在 Nginx/Ingress 后:WebSocket upgrade 透传;`/k8s/` 端点禁用请求体缓冲(exec 流需要) |
@@ -342,7 +342,7 @@ GET    /api/v1/audit-logs              GET/POST /api/v1/roles  /api/v1/role-bind
 ### 8.2 Agent
 
 - 页面生成 `kubectl apply -f <url>`(URL 由服务端 `/api/v1/agent/manifest?token=...` 动态渲染,token 注入环境变量),一键复制;
-- Helm 方式:`helm install v911-agent oci://<registry>/v911-agent --set serverUrl= --set enrollToken=`;
+- Helm 方式:`helm install kubeui-agent oci://<registry>/kubeui-agent --set serverUrl= --set enrollToken=`;
 - Agent 与服务端版本兼容矩阵:Agent 只依赖信令协议 v1,服务端向后兼容一个 minor 版本。
 
 ---

@@ -5,9 +5,9 @@ PVC:仅 sqlite 持久化开启且未指定 existingClaim 时渲染。
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ include "v911.name" . }}-data
+  name: {{ include "kubeui.name" . }}-data
   labels:
-    app.kubernetes.io/name: {{ include "v911.name" . }}
+    app.kubernetes.io/name: {{ include "kubeui.name" . }}
 spec:
   accessModes:
     - ReadWriteOnce

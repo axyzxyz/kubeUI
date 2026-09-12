@@ -1,9 +1,9 @@
 {{/*
 Agent 部署(Deployment + 最小 RBAC)。
-默认不渲染(agent.enabled=false):Agent 通常部署在被管集群,不在 v911 所在集群。
+默认不渲染(agent.enabled=false):Agent 通常部署在被管集群,不在 kubeui 所在集群。
 跨集群使用方式(无 helm 的目标集群):
-  helm template v911 ./deploy/k8s --set agent.enabled=true \
-       --set agent.serverUrl=https://v911.example.com \
+  helm template kubeui ./deploy/k8s --set agent.enabled=true \
+       --set agent.serverUrl=https://kubeui.example.com \
        --set agent.enrollToken=<token> > agent.yaml
   kubectl apply -f agent.yaml
 
@@ -15,17 +15,17 @@ RBAC 最小权限说明:Agent 只做 WebSocket 反连与 TCP 字节透传,
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: {{ include "v911.name" . }}-agent
+  name: {{ include "kubeui.name" . }}-agent
   labels:
-    app.kubernetes.io/name: {{ include "v911.name" . }}
+    app.kubernetes.io/name: {{ include "kubeui.name" . }}
     app.kubernetes.io/component: agent
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: {{ include "v911.name" . }}-agent
+  name: {{ include "kubeui.name" . }}-agent
   labels:
-    app.kubernetes.io/name: {{ include "v911.name" . }}
+    app.kubernetes.io/name: {{ include "kubeui.name" . }}
     app.kubernetes.io/component: agent
 rules:
   - apiGroups: [""]
@@ -38,48 +38,48 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: {{ include "v911.name" . }}-agent
+  name: {{ include "kubeui.name" . }}-agent
   labels:
-    app.kubernetes.io/name: {{ include "v911.name" . }}
+    app.kubernetes.io/name: {{ include "kubeui.name" . }}
     app.kubernetes.io/component: agent
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: {{ include "v911.name" . }}-agent
+  name: {{ include "kubeui.name" . }}-agent
 subjects:
   - kind: ServiceAccount
-    name: {{ include "v911.name" . }}-agent
+    name: {{ include "kubeui.name" . }}-agent
     namespace: {{ .Release.Namespace }}
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "v911.name" . }}-agent
+  name: {{ include "kubeui.name" . }}-agent
   labels:
-    app.kubernetes.io/name: {{ include "v911.name" . }}
+    app.kubernetes.io/name: {{ include "kubeui.name" . }}
     app.kubernetes.io/component: agent
 spec:
   replicas: {{ .Values.agent.replicaCount }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "v911.name" . }}
+      app.kubernetes.io/name: {{ include "kubeui.name" . }}
       app.kubernetes.io/component: agent
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: {{ include "v911.name" . }}
+        app.kubernetes.io/name: {{ include "kubeui.name" . }}
         app.kubernetes.io/component: agent
     spec:
-      serviceAccountName: {{ include "v911.name" . }}-agent
+      serviceAccountName: {{ include "kubeui.name" . }}-agent
       containers:
         - name: agent
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          command: ["/usr/local/bin/v911-agent"]
+          command: ["/usr/local/bin/kubeui-agent"]
           env:
-            - name: V911_SERVER_URL
+            - name: KUBEUI_SERVER_URL
               value: {{ required "agent.serverUrl 必填" .Values.agent.serverUrl | quote }}
-            - name: V911_ENROLL_TOKEN
+            - name: KUBEUI_ENROLL_TOKEN
               value: {{ required "agent.enrollToken 必填" .Values.agent.enrollToken | quote }}
           resources:
             requests:

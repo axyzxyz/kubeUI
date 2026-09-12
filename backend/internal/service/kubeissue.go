@@ -9,10 +9,10 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
 
-	"github.com/v911/backend/internal/model"
-	"github.com/v911/backend/internal/pkg/errcode"
-	"github.com/v911/backend/internal/pkg/logx"
-	"github.com/v911/backend/internal/store"
+	"github.com/axyzxyz/kubeui/backend/internal/model"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/errcode"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/logx"
+	"github.com/axyzxyz/kubeui/backend/internal/store"
 )
 
 // 客户端 kubeconfig 签发约定(01-architecture §5):
@@ -49,7 +49,7 @@ type KubeconfigService struct {
 	nowFunc func() time.Time // 可注入,便于测试
 }
 
-// NewKubeconfigService 构造 KubeconfigService;externalURL 形如 https://v911.example.com。
+// NewKubeconfigService 构造 KubeconfigService;externalURL 形如 https://kubeui.example.com。
 func NewKubeconfigService(issued *store.IssuedKubeconfigRepo, clusters *store.ClusterRepo, externalURL string) *KubeconfigService {
 	return &KubeconfigService{
 		issued:      issued,
@@ -223,14 +223,14 @@ func (s *KubeconfigService) cleanupExpired(ctx context.Context) {
 // token 原文仅进入返回的 YAML,禁止落日志。
 func BuildKubeconfigYAML(cluster, token, externalURL string) (string, error) {
 	cfg := clientcmdapi.NewConfig()
-	clusterName := "v911-" + cluster
+	clusterName := "kubeui-" + cluster
 	cfg.Clusters[clusterName] = &clientcmdapi.Cluster{
 		Server: fmt.Sprintf("%s/k8s/%s", externalURL, cluster),
 		// 平台对外证书不可预知,客户端 kubeconfig 默认跳过校验;
 		// 生产环境建议替换为平台 CA 并关闭该开关。
 		InsecureSkipTLSVerify: true,
 	}
-	userName := "v911-" + cluster
+	userName := "kubeui-" + cluster
 	cfg.AuthInfos[userName] = &clientcmdapi.AuthInfo{Token: token}
 	ctxName := clusterName
 	cfg.Contexts[ctxName] = &clientcmdapi.Context{

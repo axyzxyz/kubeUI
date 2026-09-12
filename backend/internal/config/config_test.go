@@ -8,8 +8,8 @@ import (
 )
 
 func TestLoadDefaultsZeroConfig(t *testing.T) {
-	t.Setenv("V911_MASTER_KEY", "")
-	t.Setenv("V911_JWT_SECRET", "")
+	t.Setenv("KUBEUI_MASTER_KEY", "")
+	t.Setenv("KUBEUI_JWT_SECRET", "")
 	cfg, err := Load("")
 	if err != nil {
 		t.Fatalf("Load: %v", err)
@@ -17,7 +17,7 @@ func TestLoadDefaultsZeroConfig(t *testing.T) {
 	if cfg.Server.Addr != ":8080" {
 		t.Fatalf("addr = %q, want :8080", cfg.Server.Addr)
 	}
-	if cfg.Database.Driver != "sqlite" || cfg.Database.DSN != "data/v911.db" {
+	if cfg.Database.Driver != "sqlite" || cfg.Database.DSN != "data/kubeui.db" {
 		t.Fatalf("db default = %+v", cfg.Database)
 	}
 	if cfg.Security.MasterKey == "" || cfg.Security.JWTSecret == "" {
@@ -36,7 +36,7 @@ server:
   addr: ":9090"
 database:
   driver: sqlite
-  dsn: /tmp/v911-test.db
+  dsn: /tmp/kubeUI-test.db
 auth:
   jwtSecret: yaml-secret
 security:
@@ -45,8 +45,8 @@ security:
 	if err := os.WriteFile(path, []byte(content), 0o600); err != nil {
 		t.Fatalf("write config: %v", err)
 	}
-	t.Setenv("V911_MASTER_KEY", "BBBB")
-	t.Setenv("V911_SERVER__ADDR", ":7070")
+	t.Setenv("KUBEUI_MASTER_KEY", "BBBB")
+	t.Setenv("KUBEUI_SERVER__ADDR", ":7070")
 	cfg, err := Load(path)
 	if err != nil {
 		t.Fatalf("Load: %v", err)
@@ -55,7 +55,7 @@ security:
 		t.Fatalf("env should override yaml addr, got %q", cfg.Server.Addr)
 	}
 	if cfg.Security.MasterKey != "BBBB" {
-		t.Fatalf("V911_MASTER_KEY should win, got %q", cfg.Security.MasterKey)
+		t.Fatalf("KUBEUI_MASTER_KEY should win, got %q", cfg.Security.MasterKey)
 	}
 	if cfg.Security.JWTSecret != "yaml-secret" {
 		t.Fatalf("jwt secret from yaml, got %q", cfg.Security.JWTSecret)

@@ -14,8 +14,8 @@ import (
 
 	"github.com/gorilla/websocket"
 
-	"github.com/v911/backend/internal/pkg/logx"
-	"github.com/v911/backend/internal/pkg/wsx"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/logx"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/wsx"
 )
 
 // Agent 重连退避(01-architecture §4.2):1s 起步,指数翻倍,60s 封顶,
@@ -27,7 +27,7 @@ const (
 
 // ClientConfig 是 Agent 客户端配置。
 type ClientConfig struct {
-	// ServerURL 平台基础地址,如 https://v911.example.com。
+	// ServerURL 平台基础地址,如 https://kubeUI.example.com。
 	ServerURL string
 	// Token 是 Enrollment Token,只在注册帧中出现,禁止打印与落日志。
 	Token string

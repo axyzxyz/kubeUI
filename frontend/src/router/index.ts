@@ -141,7 +141,7 @@ router.onError((error) => {
     /Loading( CSS)? chunk .* failed/i.test(msg);
   if (isChunkError && !chunkReloaded) {
     chunkReloaded = true;
-    window.sessionStorage.setItem('v911.chunkReload', '1');
+    window.sessionStorage.setItem('kubeui.chunkReload', '1');
     window.location.reload();
   }
 });

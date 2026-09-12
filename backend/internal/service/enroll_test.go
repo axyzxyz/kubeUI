@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/v911/backend/internal/pkg/errcode"
-	"github.com/v911/backend/internal/store"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/errcode"
+	"github.com/axyzxyz/kubeui/backend/internal/store"
 )
 
 // newEnrollService 构造基于 sqlite 内存库的 EnrollService。
@@ -158,20 +158,20 @@ func TestRenderAgentManifest(t *testing.T) {
 	if err != nil {
 		t.Fatalf("create: %v", err)
 	}
-	yaml, err := s.RenderAgentManifest(ctx, created.Token, "https://v911.example.com")
+	yaml, err := s.RenderAgentManifest(ctx, created.Token, "https://kubeUI.example.com")
 	if err != nil {
 		t.Fatalf("render: %v", err)
 	}
 	for _, want := range []string{
 		"kind: Deployment", "kind: ServiceAccount", "kind: RoleBinding",
-		"name: v911-system", "https://v911.example.com", created.Token,
+		"name: kubeui-system", "https://kubeUI.example.com", created.Token,
 		"rules: []",
 	} {
 		if !strings.Contains(yaml, want) {
 			t.Fatalf("manifest missing %q", want)
 		}
 	}
-	if _, err := s.RenderAgentManifest(ctx, "bogus", "https://v911.example.com"); err == nil ||
+	if _, err := s.RenderAgentManifest(ctx, "bogus", "https://kubeUI.example.com"); err == nil ||
 		errcode.From(err).Code != errcode.EnrollTokenInvalid {
 		t.Fatalf("want EnrollTokenInvalid for bogus token, got %v", err)
 	}

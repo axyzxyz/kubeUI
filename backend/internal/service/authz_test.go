@@ -7,9 +7,9 @@ import (
 	"sort"
 	"testing"
 
-	"github.com/v911/backend/internal/model"
-	"github.com/v911/backend/internal/pkg/errcode"
-	"github.com/v911/backend/internal/store"
+	"github.com/axyzxyz/kubeui/backend/internal/model"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/errcode"
+	"github.com/axyzxyz/kubeui/backend/internal/store"
 )
 
 // newRBACFixture 构造 RBAC 授权解析测试夹具:

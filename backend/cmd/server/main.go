@@ -1,4 +1,4 @@
-// v911 服务端唯一入口:仅做装配,禁止业务逻辑。
+// kubeUI 服务端唯一入口:仅做装配,禁止业务逻辑。
 package main
 
 import (
@@ -12,16 +12,16 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/v911/backend/internal/agent"
-	"github.com/v911/backend/internal/api/handler"
-	"github.com/v911/backend/internal/api/middleware"
-	"github.com/v911/backend/internal/config"
-	"github.com/v911/backend/internal/k8s"
-	"github.com/v911/backend/internal/model"
-	"github.com/v911/backend/internal/pkg/crypto"
-	"github.com/v911/backend/internal/pkg/logx"
-	"github.com/v911/backend/internal/service"
-	"github.com/v911/backend/internal/store"
+	"github.com/axyzxyz/kubeui/backend/internal/agent"
+	"github.com/axyzxyz/kubeui/backend/internal/api/handler"
+	"github.com/axyzxyz/kubeui/backend/internal/api/middleware"
+	"github.com/axyzxyz/kubeui/backend/internal/config"
+	"github.com/axyzxyz/kubeui/backend/internal/k8s"
+	"github.com/axyzxyz/kubeui/backend/internal/model"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/crypto"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/logx"
+	"github.com/axyzxyz/kubeui/backend/internal/service"
+	"github.com/axyzxyz/kubeui/backend/internal/store"
 	"gorm.io/gorm"
 )
 

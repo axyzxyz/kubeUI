@@ -1,4 +1,4 @@
-module github.com/v911/backend
+module github.com/axyzxyz/kubeui/backend
 
 go 1.26.0
 

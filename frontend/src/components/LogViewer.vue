@@ -32,7 +32,7 @@ const filtered = computed(() => {
 
 const url = computed(() => {
   const proto = window.location.protocol === 'https:' ? 'wss' : 'ws';
-  const auth = JSON.parse(localStorage.getItem('v911.auth') ?? 'null') as {
+  const auth = JSON.parse(localStorage.getItem('kubeui.auth') ?? 'null') as {
     accessToken: string;
   } | null;
   const token = auth?.accessToken ?? '';

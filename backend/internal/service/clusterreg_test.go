@@ -10,10 +10,10 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/v911/backend/internal/model"
-	"github.com/v911/backend/internal/pkg/crypto"
-	"github.com/v911/backend/internal/pkg/errcode"
-	"github.com/v911/backend/internal/store"
+	"github.com/axyzxyz/kubeui/backend/internal/model"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/crypto"
+	"github.com/axyzxyz/kubeui/backend/internal/pkg/errcode"
+	"github.com/axyzxyz/kubeui/backend/internal/store"
 )
 
 // fakeAPIServer 返回一个模拟 K8s API Server 的 httptest 服务,仅实现 /version。
