@@ -283,6 +283,8 @@ export interface EnrollTokenCreated extends EnrollToken {
 /** backend/internal/model.AgentManifest */
 export interface AgentManifest {
   yaml: string;
+  /** 平台对外基础地址,供二进制/Docker 启动命令拼接 */
+  serverUrl: string;
 }
 
 /** CRD 列表项(经通用 ResourceItem,附带 spec.names 解析结果) */

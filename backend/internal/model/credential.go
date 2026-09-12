@@ -42,4 +42,6 @@ type IssuedKubeconfigCreated struct {
 // AgentManifest 是 GET /agent/manifest 的响应。
 type AgentManifest struct {
 	YAML string `json:"yaml"`
+	// ServerURL 平台对外基础地址,供二进制/Docker 启动命令拼接。
+	ServerURL string `json:"serverUrl"`
 }

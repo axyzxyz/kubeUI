@@ -20,8 +20,29 @@ const ttl = computed(() =>
 );
 const agentYaml = ref('');
 const agentToken = ref('');
+const agentServerUrl = ref('');
 const agentLoading = ref(false);
 const agentCopied = ref(false);
+type InstallMode = 'yaml' | 'binary' | 'docker';
+const installMode = ref<InstallMode>('yaml');
+const RELEASE_URL = 'https://github.com/axyzxyz/kubeUI/releases';
+const binaryCmd = computed(() =>
+  agentServerUrl.value === ''
+    ? ''
+    : `./kubeui-agent-linux-amd64 -server ${agentServerUrl.value} -token ${agentToken.value}`,
+);
+const dockerCmd = computed(() =>
+  agentServerUrl.value === ''
+    ? ''
+    : `docker run -d --name kubeui-agent --restart=always \\\n  ghcr.io/axyzxyz/kubeui-agent:latest \\\n  -server ${agentServerUrl.value} -token ${agentToken.value}`,
+);
+const currentInstallText = computed(() =>
+  installMode.value === 'yaml'
+    ? agentYaml.value
+    : installMode.value === 'binary'
+      ? binaryCmd.value
+      : dockerCmd.value,
+);
 const kubeconfigText = ref('');
 const name = ref('');
 const description = ref('');
@@ -79,6 +100,7 @@ async function genAgentManifest(): Promise<void> {
     agentToken.value = created.token;
     const manifest = await getAgentManifest(created.token);
     agentYaml.value = manifest.yaml;
+    agentServerUrl.value = manifest.serverUrl;
   } catch (e) {
     errorMsg.value = humanizeError(e);
   } finally {
@@ -86,8 +108,8 @@ async function genAgentManifest(): Promise<void> {
   }
 }
 
-async function copyAgentYaml(): Promise<void> {
-  await navigator.clipboard.writeText(agentYaml.value);
+async function copyCurrent(): Promise<void> {
+  await navigator.clipboard.writeText(currentInstallText.value);
   agentCopied.value = true;
   window.setTimeout(() => {
     agentCopied.value = false;
@@ -230,20 +252,30 @@ async function copyAgentYaml(): Promise<void> {
             重新生成
           </el-button>
         </div>
+        <el-radio-group v-model="installMode" size="small" style="margin-bottom: 8px">
+          <el-radio-button value="yaml">K8s YAML</el-radio-button>
+          <el-radio-button value="binary">二进制</el-radio-button>
+          <el-radio-button value="docker">Docker</el-radio-button>
+        </el-radio-group>
         <el-input
-          v-if="agentYaml !== ''"
-          v-model="agentYaml"
+          v-if="currentInstallText !== ''"
+          :model-value="currentInstallText"
           type="textarea"
-          :rows="16"
+          :rows="installMode === 'yaml' ? 14 : 3"
           readonly
           class="mono"
         />
         <div v-if="errorMsg" class="error">{{ errorMsg }}</div>
-        <div v-if="agentYaml !== ''" class="actions" style="justify-content: flex-start">
-          <el-button type="primary" size="small" @click="copyAgentYaml">
-            {{ agentCopied ? '已复制' : '一键复制 YAML' }}
+        <div v-if="currentInstallText !== ''" class="actions" style="justify-content: flex-start">
+          <el-button type="primary" size="small" @click="copyCurrent">
+            {{ agentCopied ? '已复制' : '一键复制' }}
           </el-button>
-          <span class="hint">在目标集群执行: kubectl apply -f agent.yaml</span>
+          <span v-if="installMode === 'yaml'" class="hint">在目标集群执行: kubectl apply -f agent.yaml</span>
+          <span v-else-if="installMode === 'binary'" class="hint">
+            需先下载 agent 二进制:
+            <a :href="RELEASE_URL" target="_blank" rel="noopener">{{ RELEASE_URL }}</a>
+          </span>
+          <span v-else class="hint">使用 agent 镜像,目标机器需可访问平台地址</span>
         </div>
         <p v-if="agentYaml !== ''" class="hint" style="margin-top: 8px">
           有效期内 Agent 断线/重启可自动重连;过期或吊销后重连将被拒绝,需重新签发并更新 Agent。

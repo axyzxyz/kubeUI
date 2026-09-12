@@ -55,22 +55,27 @@ jobs:
             -o out/kubeui-server-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.ext }} ./cmd/server
           CGO_ENABLED=0 go build -trimpath -ldflags="$LDFLAGS" \
             -o out/kubeui-agent-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.ext }} ./cmd/agent
-      - name: Package archive
+      # server 与 agent 分包发布,各自独立下载升级
+      - name: Package archives
         working-directory: backend/out
         run: |
           VER="${GITHUB_REF_NAME#v}"
-          SRV="kubeui-server-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.ext }}"
-          AGT="kubeui-agent-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.ext }}"
-          ARCHIVE="kubeui-${VER}-${{ matrix.goos }}-${{ matrix.goarch }}.${{ matrix.arc }}"
+          OS="${{ matrix.goos }}"; ARCH="${{ matrix.goarch }}"; EXT="${{ matrix.ext }}"
+          SRV="kubeui-server-$OS-$ARCH$EXT"
+          AGT="kubeui-agent-$OS-$ARCH$EXT"
           if [ "${{ matrix.arc }}" = "zip" ]; then
-            zip "$ARCHIVE" "$SRV" "$AGT"
+            zip "kubeui-server-$VER-$OS-$ARCH.zip" "$SRV"
+            zip "kubeui-agent-$VER-$OS-$ARCH.zip" "$AGT"
           else
-            tar czf "$ARCHIVE" "$SRV" "$AGT"
+            tar czf "kubeui-server-$VER-$OS-$ARCH.tar.gz" "$SRV"
+            tar czf "kubeui-agent-$VER-$OS-$ARCH.tar.gz" "$AGT"
           fi
       - uses: actions/upload-artifact@v4
         with:
           name: kubeui-${{ matrix.goos }}-${{ matrix.goarch }}
-          path: backend/out/*.${{ matrix.arc }}
+          path: |
+            backend/out/*.tar.gz
+            backend/out/*.zip
 
   release:
     needs: binaries

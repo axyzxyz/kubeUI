@@ -27,12 +27,14 @@ make build && ./bin/kubeui-server
 
 ## 下载
 
-**二进制压缩包**:[https://github.com/axyzxyz/kubeUI/releases](https://github.com/axyzxyz/kubeUI/releases)(打 `v*` tag 后 CI 自动构建发布)
+**二进制压缩包**:[https://github.com/axyzxyz/kubeUI/releases](https://github.com/axyzxyz/kubeUI/releases)(打 `v*` tag 后 CI 自动构建发布;server 与 agent 分包)
 
 | 产物 | 平台 | 内容 |
 |---|---|---|
-| `kubeui-<ver>-linux-amd64.tar.gz` | Linux x86_64 | kubeui-server + kubeui-agent(前端已内嵌) |
-| `kubeui-<ver>-windows-amd64.zip` | Windows x86_64 | kubeui-server.exe + kubeui-agent.exe(前端已内嵌) |
+| `kubeui-server-<ver>-linux-amd64.tar.gz` | Linux x86_64 | kubeui-server(前端已内嵌) |
+| `kubeui-agent-<ver>-linux-amd64.tar.gz` | Linux x86_64 | kubeui-agent |
+| `kubeui-server-<ver>-windows-amd64.zip` | Windows x86_64 | kubeui-server.exe(前端已内嵌) |
+| `kubeui-agent-<ver>-windows-amd64.zip` | Windows x86_64 | kubeui-agent.exe |
 
 **容器镜像**(ghcr.io,随 Release 同步发布):
 

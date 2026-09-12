@@ -99,6 +99,6 @@ func agentManifest(d Deps, cfg *config.Config) gin.HandlerFunc {
 			response.Fail(c, err)
 			return
 		}
-		response.OK(c, model.AgentManifest{YAML: yaml})
+		response.OK(c, model.AgentManifest{YAML: yaml, ServerURL: cfg.Server.ExternalURL})
 	}
 }

@@ -53,11 +53,12 @@ async function setupTerm(): Promise<void> {
   const dark = uiStore.isDark;
   const t = new xterm.Terminal({
     cursorBlink: true,
+    cursorStyle: 'bar',
     fontSize: 13,
     convertEol: true,
     theme: dark
-      ? { background: '#12161d', foreground: '#e6eaf2', cursor: '#e6eaf2' }
-      : { background: '#ffffff', foreground: '#1a2230' },
+      ? { background: '#12161d', foreground: '#e6eaf2', cursor: '#e6eaf2', cursorAccent: '#12161d' }
+      : { background: '#ffffff', foreground: '#1a2230', cursor: '#1a2230', cursorAccent: '#ffffff' },
   });
   const f = new fitAddon.FitAddon();
   t.loadAddon(f);
