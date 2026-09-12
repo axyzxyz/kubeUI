@@ -1,6 +1,7 @@
 # Release 流水线:打 tag(v*)触发
-#   - 交叉编译 linux amd64/arm64 的 kubeui-server / kubeui-agent(内嵌前端)
-#   - 构建 GitHub Release 并上传二进制
+#   - 交叉编译 linux/amd64 与 windows/amd64 的 kubeui-server / kubeui-agent(内嵌前端)
+#   - linux 打 tar.gz,windows 打 zip
+#   - 构建 GitHub Release 并上传压缩包
 #   - 构建并推送镜像到 ghcr.io/axyzxyz/kubeui(server,含 agent 入口)
 #     与 ghcr.io/axyzxyz/kubeui-agent(纯 agent target)
 name: release
@@ -19,8 +20,8 @@ jobs:
     strategy:
       matrix:
         include:
-          - { goos: linux, goarch: amd64 }
-          - { goos: linux, goarch: arm64 }
+          - { goos: linux, goarch: amd64, ext: '', arc: tar.gz }
+          - { goos: windows, goarch: amd64, ext: .exe, arc: zip }
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
@@ -47,17 +48,28 @@ jobs:
           GOOS: ${{ matrix.goos }}
           GOARCH: ${{ matrix.goarch }}
         run: |
-          VERSION="${GITHUB_REF_NAME#v}"
           LDFLAGS="-s -w"
           mkdir -p out
           CGO_ENABLED=0 go build -trimpath -ldflags="$LDFLAGS" \
-            -o out/kubeui-server-${{ matrix.goos }}-${{ matrix.goarch }} ./cmd/server
+            -o out/kubeui-server-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.ext }} ./cmd/server
           CGO_ENABLED=0 go build -trimpath -ldflags="$LDFLAGS" \
-            -o out/kubeui-agent-${{ matrix.goos }}-${{ matrix.goarch }} ./cmd/agent
+            -o out/kubeui-agent-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.ext }} ./cmd/agent
+      - name: Package archive
+        working-directory: out
+        run: |
+          VER="${GITHUB_REF_NAME#v}"
+          SRV="kubeui-server-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.ext }}"
+          AGT="kubeui-agent-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.ext }}"
+          ARCHIVE="kubeui-${VER}-${{ matrix.goos }}-${{ matrix.goarch }}.${{ matrix.arc }}"
+          if [ "${{ matrix.arc }}" = "zip" ]; then
+            zip "$ARCHIVE" "$SRV" "$AGT"
+          else
+            tar czf "$ARCHIVE" "$SRV" "$AGT"
+          fi
       - uses: actions/upload-artifact@v4
         with:
           name: kubeui-${{ matrix.goos }}-${{ matrix.goarch }}
-          path: out/
+          path: out/*.${{ matrix.arc }}
 
   release:
     needs: binaries
