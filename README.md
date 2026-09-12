@@ -6,15 +6,40 @@
 
 ## 快速开始
 
+**方式一:Docker(推荐,无需装 Go/Node)**
+
 ```bash
-make build && ./bin/kubeui-server
-# 或指定配置:
-./bin/kubeui-server --config deploy/config-example.yaml
+docker run -d --name kubeui -p 8080:8080 -v kubeui-data:/var/lib/kubeui/data \
+  ghcr.io/axyzxyz/kubeui:latest
 ```
 
-打开 `http://localhost:8080`。
+**方式二:二进制** — 从 [Releases](https://github.com/axyzxyz/kubeUI/releases) 下载压缩包解压后运行,或本地构建:
 
-**默认管理员**:`admin / admin123`(首次启动自动创建,由 `security.adminPassword` 配置,登录后请立即修改)。
+```bash
+./kubeui-server-linux-amd64
+# 或:
+make build && ./bin/kubeui-server
+# 指定配置:
+./kubeui-server --config deploy/config-example.yaml
+```
+
+打开 `http://localhost:8080`。**默认管理员**:`admin / admin123`(首次启动自动创建,由 `security.adminPassword` 配置,登录后请立即修改)。
+
+## 下载
+
+**二进制压缩包**:[https://github.com/axyzxyz/kubeUI/releases](https://github.com/axyzxyz/kubeUI/releases)(打 `v*` tag 后 CI 自动构建发布)
+
+| 产物 | 平台 | 内容 |
+|---|---|---|
+| `kubeui-<ver>-linux-amd64.tar.gz` | Linux x86_64 | kubeui-server + kubeui-agent(前端已内嵌) |
+| `kubeui-<ver>-windows-amd64.zip` | Windows x86_64 | kubeui-server.exe + kubeui-agent.exe(前端已内嵌) |
+
+**容器镜像**(ghcr.io,随 Release 同步发布):
+
+| 镜像 | 说明 |
+|---|---|
+| `ghcr.io/axyzxyz/kubeui:<tag>` / `:latest` | server 运行镜像(内含 kubeui-agent 二进制,可 `--entrypoint` 复用) |
+| `ghcr.io/axyzxyz/kubeui-agent:<tag>` / `:latest` | 纯 agent 镜像(用于被管集群) |
 
 ## 功能
 
@@ -71,15 +96,44 @@ deploy/
 Makefile    唯一任务入口
 ```
 
-## Docker / K8s 部署
+## Docker 部署
+
+**运行 server**(零配置即可启动,SQLite 数据落容器 `/var/lib/kubeui/data`):
 
 ```bash
-docker build -f deploy/Dockerfile -t kubeUI .
-# agent 独立镜像:
-docker build -f deploy/Dockerfile --target agent -t kubeui-agent .
+docker run -d --name kubeui -p 8080:8080 -v kubeui-data:/var/lib/kubeui/data \
+  ghcr.io/axyzxyz/kubeui:latest
+```
 
-# Helm(本机无 helm 可用 docker 跑 alpine/helm template 验证):
-helm install kubeUI deploy/k8s --set secret.masterKey=$(openssl rand -base64 32)
+自定义配置(密钥等生产必配项见「配置」一节):
+
+```bash
+docker run -d --name kubeui -p 8080:8080 -v kubeui-data:/var/lib/kubeui/data \
+  -v $(pwd)/config.yaml:/etc/kubeui/config.yaml \
+  ghcr.io/axyzxyz/kubeui:latest --config /etc/kubeui/config.yaml
+```
+
+**运行 agent**(在被管集群/能同时访问平台与目标 APIServer 的机器上,参数优先、环境变量兜底):
+
+```bash
+docker run -d --name kubeui-agent --restart=always \
+  ghcr.io/axyzxyz/kubeui-agent:latest \
+  -server https://kubeui.example.com -token <enroll-token>
+# 等价环境变量形式:
+#   -e KUBEUI_SERVER_URL=https://kubeui.example.com -e KUBEUI_ENROLL_TOKEN=<token>
+```
+
+**自建镜像**(网络受限环境可加 `--build-arg GOPROXY=https://goproxy.cn,direct`):
+
+```bash
+docker build -f deploy/Dockerfile --target server -t kubeui .        # server 镜像
+docker build -f deploy/Dockerfile --target agent -t kubeui-agent .   # agent 镜像
+```
+
+## Helm / K8s 部署
+
+```bash
+helm install kubeui deploy/k8s --set secret.masterKey=$(openssl rand -base64 32)
 ```
 
 生产部署在 Nginx/Ingress 后需:WebSocket upgrade 透传;`/k8s/` 端点禁用请求体缓冲(chart 的 Ingress 模板已内置注解)。
@@ -97,6 +151,7 @@ helm template kubeUI deploy/k8s --set agent.enabled=true \
 或直接运行二进制(参数优先,环境变量 `KUBEUI_SERVER_URL`/`KUBEUI_ENROLL_TOKEN` 兜底):
 
 ```bash
-./bin/kubeui-agent -server https://kubeUI.example.com -token <token>
+./kubeui-agent -server https://kubeui.example.com -token <token>
 # 测试环境可加 -insecure 跳过平台 TLS 校验
+# Docker 方式见「Docker 部署 · 运行 agent」
 ```
