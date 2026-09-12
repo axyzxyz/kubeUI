@@ -34,6 +34,8 @@ deploy/config.local.yaml
 # Go
 backend/vendor/
 
-# embed 产物
-backend/internal/web/dist/
+# embed 产物(占位 index.html 保留在版本控制,保证裸 checkout 可编译)
+!backend/internal/web/dist/
+backend/internal/web/dist/*
+!backend/internal/web/dist/index.html
 
