@@ -99,9 +99,6 @@ func (s *ResourceService) resolve(rt *k8s.ClusterRuntime, resource string, names
 	if namespacedRequired && !ref.Namespaced {
 		return k8s.ResourceRef{}, errcode.New(errcode.ParamInvalid, "resource "+resource+" is cluster-scoped")
 	}
-	if !ref.Namespaced {
-		namespace = ""
-	}
 	return ref, nil
 }
 
@@ -302,11 +299,12 @@ func (s *ResourceService) CreateResource(ctx context.Context, cluster, resource,
 	if err != nil {
 		return nil, err
 	}
-	if !ref.Namespaced {
-		namespace = ""
-	} else if namespace == "" {
+	switch {
+	case !ref.Namespaced:
+		// 集群级资源不落 namespace
+	case namespace == "":
 		return nil, errcode.New(errcode.ParamInvalid, "namespace is required for namespaced resource "+resource)
-	} else {
+	default:
 		obj.SetNamespace(namespace)
 	}
 	ctx, cancel := context.WithTimeout(ctx, k8sCallTimeout)

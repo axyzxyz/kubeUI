@@ -44,9 +44,15 @@ func TestEnvelopeRoundTripJSON(t *testing.T) {
 func TestFrameTypeConstants(t *testing.T) {
 	// 协议常量与 04 §4.5 对齐,防止误改。
 	for _, tc := range []struct{ got, want string }{
-		{TypeSubscribe, "subscribe"}, {TypeUnsubscribe, "unsubscribe"},
-		{TypeEvent, "event"}, {TypePing, "ping"}, {TypePong, "pong"}, {TypeError, "error"},
-		{ActionAdded, "added"}, {ActionModified, "modified"}, {ActionDeleted, "deleted"},
+		{TypeSubscribe, "subscribe"},
+		{TypeUnsubscribe, "unsubscribe"},
+		{TypeEvent, "event"},
+		{TypePing, "ping"},
+		{TypePong, "pong"},
+		{TypeError, "error"},
+		{ActionAdded, "added"},
+		{ActionModified, "modified"},
+		{ActionDeleted, "deleted"},
 	} {
 		if tc.got != tc.want {
 			t.Fatalf("got %q, want %q", tc.got, tc.want)

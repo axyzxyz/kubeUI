@@ -44,6 +44,7 @@ jobs:
           mkdir -p backend/internal/web/dist
           cp -r frontend/dist/. backend/internal/web/dist/
       - name: Build binaries
+        working-directory: backend
         env:
           GOOS: ${{ matrix.goos }}
           GOARCH: ${{ matrix.goarch }}
@@ -55,7 +56,7 @@ jobs:
           CGO_ENABLED=0 go build -trimpath -ldflags="$LDFLAGS" \
             -o out/kubeui-agent-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.ext }} ./cmd/agent
       - name: Package archive
-        working-directory: out
+        working-directory: backend/out
         run: |
           VER="${GITHUB_REF_NAME#v}"
           SRV="kubeui-server-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.ext }}"
@@ -69,7 +70,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: kubeui-${{ matrix.goos }}-${{ matrix.goarch }}
-          path: out/*.${{ matrix.arc }}
+          path: backend/out/*.${{ matrix.arc }}
 
   release:
     needs: binaries

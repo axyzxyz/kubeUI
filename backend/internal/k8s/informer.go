@@ -21,8 +21,6 @@ const (
 	_ = ""
 	// informerResyncPeriod informer resync 周期。
 	informerResyncPeriod = time.Minute
-	// residentEventsID 事件常驻 informer 的订阅 ID,不参与空闲回收。
-	residentEventsID = "__resident-events__"
 )
 
 var errPoolClosed = errors.New("informer pool closed")
@@ -105,7 +103,10 @@ func (p *InformerPool) Watch(gvr schema.GroupVersionResource, namespace, id stri
 			lastAccess: time.Now(),
 		}
 		p.entries[key] = e
-		inf.AddEventHandler(&forwardHandler{cluster: p.cluster, gvr: gvr, pool: p, key: key})
+		if _, err := inf.AddEventHandler(&forwardHandler{cluster: p.cluster, gvr: gvr, pool: p, key: key}); err != nil {
+			logx.Warn(context.Background(), "register event handler failed",
+				"cluster", p.cluster, "resource_type", gvr.Resource, "err", err)
+		}
 		factory.Start(e.stopCh)
 		logx.Info(context.Background(), "informer started",
 			"cluster", p.cluster, "resource_type", gvr.Resource, "namespace", namespace)
@@ -156,7 +157,10 @@ func (p *InformerPool) EnsureEventInformer() error {
 		lastAccess: time.Now(),
 	}
 	p.entries[key] = e
-	inf.AddEventHandler(&forwardHandler{cluster: p.cluster, gvr: gvr, pool: p, key: key})
+	if _, err := inf.AddEventHandler(&forwardHandler{cluster: p.cluster, gvr: gvr, pool: p, key: key}); err != nil {
+		logx.Warn(context.Background(), "register resident event handler failed",
+			"cluster", p.cluster, "resource_type", gvr.Resource, "err", err)
+	}
 	factory.Start(e.stopCh)
 	return nil
 }

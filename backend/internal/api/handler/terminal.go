@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"io"
-	"sync"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -136,8 +135,10 @@ func pumpTerminalInput(ctx context.Context, conn *watchConn, write func([]byte) 
 		if err != nil {
 			return
 		}
-		switch mt {
-		case websocket.TextMessage:
+		if mt != websocket.TextMessage {
+			continue
+		}
+		{
 			var frame struct {
 				Type string `json:"type"`
 				Data string `json:"data"`
@@ -161,7 +162,6 @@ func pumpTerminalInput(ctx context.Context, conn *watchConn, write func([]byte) 
 
 // terminalSizeQueue 实现 remotecommand.TerminalSizeQueue,经 channel 接收 resize。
 type terminalSizeQueue struct {
-	mu   sync.Mutex
 	ch   chan remotecommand.TerminalSize
 	done chan struct{}
 }

@@ -313,7 +313,8 @@ func TestRBACFullChain(t *testing.T) {
 	w = doJSON(t, r, http.MethodPost, "/api/v1/grants", admin, map[string]any{
 		"subjectType": "user", "subjectId": aliceID,
 		"objectType": "role", "objectId": roleID,
-		"scopes": []model.Scope{{Cluster: "*", Namespace: "default"}}})
+		"scopes": []model.Scope{{Cluster: "*", Namespace: "default"}},
+	})
 	if decodeBody(t, w).Code != 40001 {
 		t.Fatalf(`cluster=* with ns=default should be 40001: %s`, w.Body.String())
 	}

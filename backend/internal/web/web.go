@@ -1,7 +1,7 @@
 // Package web 提供前端 SPA 静态资源的 embed 与回退服务。
 //
-// go:embed 不能跨模块,因此构建顺序为:先构建 frontend 产物,再由根 Makefile /
-// Dockerfile 将 frontend/dist 拷贝到 backend/web/dist,最后编译本包。
+// embed 编译指令不能跨模块,因此构建顺序为:先构建 frontend 产物,再由根
+// Makefile / Dockerfile 将 frontend/dist 拷贝到 backend/web/dist,最后编译本包。
 // 本仓库随版本控制一个占位 index.html:未拷贝产物时构建仍可通过,运行期返回
 // 明确的提示页(而非构建失败)。
 package web

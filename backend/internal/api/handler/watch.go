@@ -33,7 +33,6 @@ var upgrader = websocket.Upgrader{
 type watchConn struct {
 	id   string
 	ws   *websocket.Conn
-	mu   sync.Mutex
 	send chan wsx.Envelope
 	done chan struct{}
 	once sync.Once

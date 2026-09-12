@@ -96,7 +96,7 @@ func (c *Client) Run(ctx context.Context) error {
 
 // runOnce 建立一次信令会话直至断开;返回是否完成过注册。
 func (c *Client) runOnce(ctx context.Context) (registered bool, err error) {
-	ws, _, err := c.dialer.DialContext(ctx, c.signalingURL(), nil)
+	ws, _, err := c.dialer.DialContext(ctx, c.signalingURL(), nil) //nolint:bodyclose // ws 由 sess.close() 统一关闭
 	if err != nil {
 		return false, fmt.Errorf("dial signaling channel: %w", err)
 	}
@@ -234,7 +234,7 @@ func (s *agentSession) handleDial(ctx context.Context, p DialPayload) {
 	}
 	defer target.Close() //nolint:errcheck // 关闭错误无处理价值
 
-	ws, _, err := s.client.dialer.DialContext(ctx, s.client.dataURL(p.ConnID, s.sessionKey), nil)
+	ws, _, err := s.client.dialer.DialContext(ctx, s.client.dataURL(p.ConnID, s.sessionKey), nil) //nolint:bodyclose // ws 由 handleDial 对拷结束后统一关闭
 	if err != nil {
 		logx.Warn(ctx, "open data channel failed", "err", err)
 		return

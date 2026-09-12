@@ -38,7 +38,7 @@ func fakeAPIServer(t *testing.T, version string) *httptest.Server {
 // kubeconfigYAML 生成指向给定 server 的单/多 context kubeconfig 原文。
 func kubeconfigYAML(server, current string, extraContexts ...string) string {
 	var b strings.Builder
-	b.WriteString(fmt.Sprintf(`
+	fmt.Fprintf(&b, `
 apiVersion: v1
 kind: Config
 current-context: %s
@@ -47,27 +47,27 @@ contexts:
     context:
       cluster: c-a
       user: u-a
-`, current))
+`, current)
 	for _, name := range extraContexts {
-		b.WriteString(fmt.Sprintf(`  - name: %s
+		fmt.Fprintf(&b, `  - name: %s
     context:
       cluster: c-%s
       user: u-%s
-`, name, name, name))
+`, name, name, name)
 	}
-	b.WriteString(fmt.Sprintf(`
+	fmt.Fprintf(&b, `
 clusters:
   - name: c-a
     cluster:
       server: %s
       insecure-skip-tls-verify: true
-`, server))
+`, server)
 	for _, name := range extraContexts {
-		b.WriteString(fmt.Sprintf(`  - name: c-%s
+		fmt.Fprintf(&b, `  - name: c-%s
     cluster:
       server: %s
       insecure-skip-tls-verify: true
-`, name, server))
+`, name, server)
 	}
 	b.WriteString(`
 users:
@@ -76,10 +76,10 @@ users:
       token: test-token
 `)
 	for _, name := range extraContexts {
-		b.WriteString(fmt.Sprintf(`  - name: u-%s
+		fmt.Fprintf(&b, `  - name: u-%s
     user:
       token: test-token
-`, name))
+`, name)
 	}
 	return b.String()
 }

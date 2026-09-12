@@ -2,9 +2,11 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"time"
 
+	"k8s.io/apimachinery/pkg/version"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
@@ -310,15 +312,19 @@ func buildRestConfig(raw *clientcmdapi.Config, contextName string) (*rest.Config
 
 // probeServerVersion 拨测目标集群 /version,10s 超时。
 func probeServerVersion(ctx context.Context, cfg *rest.Config) (string, error) {
-	ctx, cancel := context.WithTimeout(ctx, probeTimeout)
+	probeCtx, cancel := context.WithTimeout(ctx, probeTimeout)
 	defer cancel()
 	client, err := kubernetes.NewForConfig(cfg)
 	if err != nil {
 		return "", fmt.Errorf("build clientset: %w", err)
 	}
-	v, err := client.Discovery().ServerVersion()
+	body, err := client.Discovery().RESTClient().Get().AbsPath("/version").Do(probeCtx).Raw()
 	if err != nil {
 		return "", fmt.Errorf("get server version: %w", err)
+	}
+	var v version.Info
+	if err := json.Unmarshal(body, &v); err != nil {
+		return "", fmt.Errorf("decode server version: %w", err)
 	}
 	return v.GitVersion, nil
 }

@@ -164,6 +164,7 @@ func (m *Manager) Register(ctx context.Context, name, version string, cfg *rest.
 	m.notify(StatusChange{Name: name, Status: "ready", Version: version, LastTransitionTime: rt.lastTransitionTime()})
 	if !m.opts.HealthDisabled {
 		// 受控生命周期 worker:由 Unregister/Close 停止并 join。
+		//nolint:gosec // 集群健康检查与请求生命周期解耦,须脱离请求 ctx
 		go m.runHealth(rt)
 	}
 	logx.Info(ctx, "cluster runtime registered", "cluster", name, "version", version)

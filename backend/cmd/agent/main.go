@@ -28,6 +28,10 @@ import (
 )
 
 func main() {
+	os.Exit(run())
+}
+
+func run() int {
 	serverURL := flag.String("server", os.Getenv("KUBEUI_SERVER_URL"),
 		"平台基础地址,如 https://kubeUI.example.com(必填;缺省读 KUBEUI_SERVER_URL)")
 	token := flag.String("token", os.Getenv("KUBEUI_ENROLL_TOKEN"),
@@ -42,7 +46,7 @@ func main() {
 	if *serverURL == "" || *token == "" {
 		fmt.Fprintln(os.Stderr, "-server and -token are required (or set KUBEUI_SERVER_URL / KUBEUI_ENROLL_TOKEN)")
 		flag.Usage()
-		os.Exit(2)
+		return 2
 	}
 
 	logx.Init("info", "json")
@@ -58,9 +62,10 @@ func main() {
 	logx.Info(ctx, "agent starting")
 	if err := client.Run(ctx); err != nil && ctx.Err() == nil {
 		logx.Error(ctx, "agent exited with error", "err", err)
-		os.Exit(1)
+		return 1
 	}
 	logx.Info(ctx, "agent stopped")
+	return 0
 }
 
 func envOr(key, def string) string {

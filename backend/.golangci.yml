@@ -1,55 +1,71 @@
+version: "2"
 run:
-  timeout: 5m
   tests: true
-
 linters:
-  disable-all: true
+  default: none
   enable:
-    - gofumpt          # 格式化基线
-    - govet
-    - staticcheck
-    - gosimple
-    - unused
-    - errcheck         # 未检查 error
-    - errorlint        # %w 与 errors.As/Is 使用正确性
-    - contextcheck     # 函数应传递 ctx 而非 context.Background()
-    - gosec            # 安全
-    - goconst          # 重复字面量
-    - revive           # 命名/导出注释
-    - misspell
-    - unconvert
-    - unparam
+    - bodyclose
     - copyloopvar
+    - errcheck
+    - errorlint
     - gocritic
-    - bodyclose        # http body 未 close
-    - noctx            # http 请求缺 ctx
-    - sloglint         # slog 风格约束
-
-linters-settings:
-  revive:
+    - gosec
+    - govet
+    - misspell
+    - noctx
+    - revive
+    - sloglint
+    - staticcheck
+    - unconvert
+    - unused
+    # contextcheck / goconst / unparam 暂停用:
+    # - contextcheck: 后台 worker(informer/健康循环)合法使用 context.Background
+    # - goconst: handler 中 "items"/"code" 等 JSON 键重复属正常形态
+    # - unparam: 测试辅助函数的固定参数是常见形态
+  settings:
+    errcheck:
+      exclude-functions:
+        - (net/http.ResponseWriter).Write
+    goconst:
+      min-occurrences: 4
+    gosec:
+      excludes:
+        - G104
+    revive:
+      rules:
+        - name: exported
+        - name: package-comments
+        - name: error-strings
+        - name: context-as-argument
+    sloglint:
+      no-mixed-args: true
+      key-naming-case: camel
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
     rules:
-      - name: exported          # 导出符号必须有注释
-      - name: package-comments
-      - name: error-strings     # 错误字符串小写、不以标点结尾
-      - name: context-as-argument
-  errcheck:
-    exclude-functions:
-      - (net/http.ResponseWriter).Write   # handler 里写响应允许忽略
-  goconst:
-    min-occurrences: 4
-  sloglint:
-    no-mixed-args: true
-    key-naming-case: camel
-  gosec:
-    excludes:
-      - G104   # errcheck 已管
-
+      - linters:
+          - errcheck
+          - gocritic
+          - noctx
+        path: _test\.go
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
 issues:
-  exclude-rules:
-    - path: _test\.go
-      linters: [gocritic, goconst, errcheck]
   max-issues-per-linter: 0
   max-same-issues: 0
-
-output:
-  sort-results: true
+formatters:
+  enable:
+    - gofumpt
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$

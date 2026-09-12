@@ -174,13 +174,13 @@ func k8sProxy(d Deps) gin.HandlerFunc {
 		proxy := &httputil.ReverseProxy{
 			Transport:     cl.Transport,
 			FlushInterval: 100 * time.Millisecond, // watch 日志流式
-			Director: func(req *http.Request) {
-				req.URL.Scheme = target.Scheme
-				req.URL.Host = target.Host
-				req.Host = target.Host
+			Rewrite: func(pr *httputil.ProxyRequest) {
+				pr.Out.URL.Scheme = target.Scheme
+				pr.Out.URL.Host = target.Host
+				pr.Out.Host = target.Host
 				// 去掉 /k8s/{cluster} 前缀,保留其后的 apiserver 路径。
-				req.URL.Path = singleJoinSlash(target.Path, stripClusterPrefix(c.Param("path")))
-				req.URL.RawPath = ""
+				pr.Out.URL.Path = singleJoinSlash(target.Path, stripClusterPrefix(c.Param("path")))
+				pr.Out.URL.RawPath = ""
 			},
 			ErrorHandler: func(w http.ResponseWriter, r *http.Request, err error) {
 				logx.Warn(r.Context(), "k8s proxy upstream error", "cluster", cluster, "err", err)

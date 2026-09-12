@@ -22,7 +22,8 @@ type RoleService struct {
 
 // NewRoleService 构造 RoleService。
 func NewRoleService(roles *store.RoleRepo, groups *store.UserGroupRepo, users *store.UserRepo,
-	roleGroups *store.RoleGroupRepo, grants *store.GrantRepo) *RoleService {
+	roleGroups *store.RoleGroupRepo, grants *store.GrantRepo,
+) *RoleService {
 	return &RoleService{roles: roles, groups: groups, users: users, roleGroups: roleGroups, grants: grants}
 }
 
@@ -146,8 +147,10 @@ func (s *RoleService) CreateUserGroup(ctx context.Context, name, description str
 	if err := s.groups.CreateUserGroup(ctx, g); err != nil {
 		return nil, err
 	}
-	return &model.UserGroup{ID: g.ID, Name: g.Name, Description: g.Description,
-		CreatedAt: g.CreatedAt, UpdatedAt: g.UpdatedAt}, nil
+	return &model.UserGroup{
+		ID: g.ID, Name: g.Name, Description: g.Description,
+		CreatedAt: g.CreatedAt, UpdatedAt: g.UpdatedAt,
+	}, nil
 }
 
 // UpdateUserGroup 更新用户组。
@@ -172,8 +175,10 @@ func (s *RoleService) UpdateUserGroup(ctx context.Context, id int64, name, descr
 	if err := s.groups.UpdateUserGroup(ctx, g); err != nil {
 		return nil, err
 	}
-	return &model.UserGroup{ID: g.ID, Name: g.Name, Description: g.Description,
-		CreatedAt: g.CreatedAt, UpdatedAt: g.UpdatedAt}, nil
+	return &model.UserGroup{
+		ID: g.ID, Name: g.Name, Description: g.Description,
+		CreatedAt: g.CreatedAt, UpdatedAt: g.UpdatedAt,
+	}, nil
 }
 
 // DeleteUserGroup 删除用户组(级联清理成员与组级绑定)。
@@ -267,8 +272,10 @@ func (s *RoleService) CreateRoleGroup(ctx context.Context, name, description str
 	if err := s.roleGroups.CreateRoleGroup(ctx, g); err != nil {
 		return nil, err
 	}
-	return &model.RoleGroup{ID: g.ID, Name: g.Name, Description: g.Description,
-		CreatedAt: g.CreatedAt, UpdatedAt: g.UpdatedAt}, nil
+	return &model.RoleGroup{
+		ID: g.ID, Name: g.Name, Description: g.Description,
+		CreatedAt: g.CreatedAt, UpdatedAt: g.UpdatedAt,
+	}, nil
 }
 
 // UpdateRoleGroup 更新角色组;名称唯一(40413)。
@@ -293,8 +300,10 @@ func (s *RoleService) UpdateRoleGroup(ctx context.Context, id int64, name, descr
 	if err := s.roleGroups.UpdateRoleGroup(ctx, g); err != nil {
 		return nil, err
 	}
-	return &model.RoleGroup{ID: g.ID, Name: g.Name, Description: g.Description,
-		CreatedAt: g.CreatedAt, UpdatedAt: g.UpdatedAt}, nil
+	return &model.RoleGroup{
+		ID: g.ID, Name: g.Name, Description: g.Description,
+		CreatedAt: g.CreatedAt, UpdatedAt: g.UpdatedAt,
+	}, nil
 }
 
 // DeleteRoleGroup 删除角色组(级联清理组内角色关联与以该组为对象的授权)。
@@ -366,7 +375,8 @@ func (s *RoleService) RemoveRoleGroupRole(ctx context.Context, groupID, roleID i
 // ListGrants 按过滤条件列出授权(subject/object 四个参数均可选、可组合,
 // 支持按主体反向查看与按对象反向查看);subjectName/objectName 实时解析。
 func (s *RoleService) ListGrants(ctx context.Context, subjectType string, subjectID int64,
-	objectType string, objectID int64) ([]model.GrantItem, error) {
+	objectType string, objectID int64,
+) ([]model.GrantItem, error) {
 	if err := validateSubjectType(subjectType); err != nil {
 		return nil, err
 	}
@@ -396,7 +406,8 @@ func (s *RoleService) ListGrants(ctx context.Context, subjectType string, subjec
 // CreateGrant 创建授权:主体与对象必须存在,scope 至少一条,
 // cluster="*" 时 namespace 必须为 "*",重复授权返回 40406。
 func (s *RoleService) CreateGrant(ctx context.Context, subjectType string, subjectID int64,
-	objectType string, objectID int64, scopes []model.Scope) (*model.GrantItem, error) {
+	objectType string, objectID int64, scopes []model.Scope,
+) (*model.GrantItem, error) {
 	if err := validateSubjectType(subjectType); err != nil {
 		return nil, err
 	}

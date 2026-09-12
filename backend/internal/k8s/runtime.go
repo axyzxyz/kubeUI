@@ -74,7 +74,8 @@ type ClusterRuntime struct {
 
 // newClusterRuntime 构建运行时对象并启动 informer 池;调用方负责在 Unregister 时调用 Stop。
 func newClusterRuntime(name, version string, cfg *rest.Config, cs kubernetes.Interface,
-	dyn dynamic.Interface, m metricsv.Interface, mapper meta.ResettableRESTMapper) *ClusterRuntime {
+	dyn dynamic.Interface, m metricsv.Interface, mapper meta.ResettableRESTMapper,
+) *ClusterRuntime {
 	rt := &ClusterRuntime{
 		Name:           name,
 		Version:        version,

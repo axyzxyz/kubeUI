@@ -250,14 +250,16 @@ func TestHalfOpenPipeRecovery(t *testing.T) {
 	f.tokens["tok-hang"] = "prod"
 	h := f.hub
 
-	ws, _, err := websocket.DefaultDialer.Dial(
+	ws, _, err := websocket.DefaultDialer.Dial( //nolint:bodyclose // ws 由 t.Cleanup 统一关闭
 		"ws://"+hostOf(f.srv.URL)+"/api/v1/agent/connect", nil)
 	if err != nil {
 		t.Fatalf("dial signaling: %v", err)
 	}
 	t.Cleanup(func() { _ = ws.Close() }) //nolint:errcheck
-	if err := ws.WriteJSON(wsx.Envelope{Type: FrameRegister,
-		Payload: mustRaw(t, RegisterPayload{Token: "tok-hang"})}); err != nil {
+	if err := ws.WriteJSON(wsx.Envelope{
+		Type:    FrameRegister,
+		Payload: mustRaw(t, RegisterPayload{Token: "tok-hang"}),
+	}); err != nil {
 		t.Fatalf("send register: %v", err)
 	}
 	var ack wsx.Envelope

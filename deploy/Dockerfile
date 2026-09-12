@@ -18,7 +18,7 @@ RUN npm run build \
     || { echo "ERROR: frontend build failed (npm run build)"; exit 1; }
 
 # ---------- 阶段 2:构建后端(server + agent) ----------
-FROM golang:1.23-alpine AS backend
+FROM golang:1.26-alpine AS backend
 WORKDIR /src/backend
 COPY backend/go.mod backend/go.sum* ./
 RUN go mod download

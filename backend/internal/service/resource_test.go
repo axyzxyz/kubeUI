@@ -2,14 +2,15 @@ package service
 
 import (
 	"context"
+	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 
-	"encoding/base64"
-	"encoding/json"
 	appsv1 "k8s.io/api/apps/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/meta"
@@ -26,7 +27,6 @@ import (
 	k8stesting "k8s.io/client-go/testing"
 	metricsv "k8s.io/metrics/pkg/client/clientset/versioned"
 	metricsfake "k8s.io/metrics/pkg/client/clientset/versioned/fake"
-	"time"
 
 	"github.com/axyzxyz/kubeui/backend/internal/k8s"
 	"github.com/axyzxyz/kubeui/backend/internal/pkg/errcode"
@@ -84,8 +84,6 @@ func newPodObj(name, namespace string, labels map[string]string) *unstructured.U
 	o.SetLabels(labels)
 	return o
 }
-
-func strPtr(s string) *string { return &s }
 
 // TestResourceList 表驱动验证列表过滤、排序白名单与内存分页。
 func TestResourceList(t *testing.T) {

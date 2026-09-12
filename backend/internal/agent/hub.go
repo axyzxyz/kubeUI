@@ -314,8 +314,9 @@ func (s *Session) run(ctx context.Context) {
 		case wsx.TypePong, FrameRegistered, FrameError:
 			// 忽略:pong 为心跳回执,其余帧在信令通道无意义。
 		default:
-			s.send(wsx.NewEnvelope(FrameError, env.RequestID,
-				wsx.ErrorPayload{Code: errcode.ParamInvalid, Message: "unknown frame type " + env.Type})) //nolint:errcheck
+			// 写失败由下轮读超时暴露,错误值无需处理
+			_ = s.send(wsx.NewEnvelope(FrameError, env.RequestID,
+				wsx.ErrorPayload{Code: errcode.ParamInvalid, Message: "unknown frame type " + env.Type}))
 		}
 	}
 }
